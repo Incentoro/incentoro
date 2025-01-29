@@ -25,33 +25,45 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0EA5E9",
+          DEFAULT: "#006DAF",
+          light: "#358DCE",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#64748B",
+          DEFAULT: "#6B7280",
           foreground: "#FFFFFF",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#EF4444",
+          foreground: "#FFFFFF",
+        },
+        success: {
+          DEFAULT: "#22C55E",
+          foreground: "#FFFFFF",
+        },
+        warning: {
+          DEFAULT: "#FACC15",
+          foreground: "#1F2937",
         },
         muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "#9CA3AF",
+          foreground: "#1F2937",
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+          DEFAULT: "#E1E1E1",
+          foreground: "#1F2937",
         },
         card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+          DEFAULT: "#FFFFFF",
+          foreground: "#1F2937",
         },
+        "text-primary": "#1F2937",
+        "text-secondary": "#6B7280",
+        "text-muted": "#9CA3AF",
+      },
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(to right, #006DAF, #358DCE)',
+        'gradient-background': 'linear-gradient(to bottom right, #E1E1E1, white)',
       },
       borderRadius: {
         lg: "var(--radius)",
