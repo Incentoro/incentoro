@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { LayoutGrid, ShieldCheck, Star, DollarSign, Zap, Users } from "lucide-react";
+import { LayoutGrid, ShieldCheck, Star, DollarSign, Zap, Users, Check } from "lucide-react";
 
 const Index = () => {
   return (
@@ -15,8 +15,8 @@ const Index = () => {
             with Smart Cashback Rewards
           </h1>
           <p className="text-xl mb-8 max-w-3xl mx-auto text-white/90">
-            Earn up to 20% cashback on your favorite AI tools and platforms. Join
-            thousands of businesses saving smarter.
+            Join thousands of businesses saving smarter with Incentoro's cashback program
+            for AI tools and platforms.
           </p>
           <div className="flex justify-center gap-4">
             <Link to="/signup">
@@ -56,7 +56,7 @@ const Index = () => {
       <section id="how-it-works" className="py-20 bg-gradient-background">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold text-center mb-16 text-text-primary">
-            How <span className="text-primary">AICashReward</span> Works
+            How <span className="text-primary">Incentoro</span> Works
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -99,7 +99,7 @@ const Index = () => {
           <h2 className="text-4xl font-bold text-center mb-16 text-text-primary">
             Simple, Transparent Pricing
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {[
               {
                 name: "Free",
@@ -109,30 +109,22 @@ const Index = () => {
                   "5% cashback on all purchases",
                   "Basic analytics",
                   "Email support",
+                  "Access to marketplace",
                 ],
               },
               {
-                name: "Pro",
-                price: "$29",
+                name: "Premium",
+                price: "$15",
                 description: "Best for growing businesses",
                 features: [
-                  "10% cashback on all purchases",
+                  "15-20% cashback on all purchases",
                   "Advanced analytics",
                   "Priority support",
                   "API access",
+                  "Custom reports",
+                  "Early access to new tools",
                 ],
                 popular: true,
-              },
-              {
-                name: "Enterprise",
-                price: "Custom",
-                description: "For large organizations",
-                features: [
-                  "20% cashback on all purchases",
-                  "Custom analytics",
-                  "24/7 phone support",
-                  "Dedicated account manager",
-                ],
               },
             ].map((plan, index) => (
               <Card
@@ -153,26 +145,62 @@ const Index = () => {
                 </h3>
                 <div className="text-4xl font-bold text-primary mb-4">
                   {plan.price}
-                  {plan.price !== "Custom" && <span className="text-lg">/mo</span>}
+                  <span className="text-lg">/mo</span>
                 </div>
                 <p className="text-text-secondary mb-6">{plan.description}</p>
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center text-text-secondary">
-                      <CheckIcon className="w-5 h-5 text-green-500 mr-2" />
+                      <Check className="w-5 h-5 text-green-500 mr-2" />
                       {feature}
                     </li>
                   ))}
                 </ul>
-                <Button
-                  className={`w-full ${
-                    plan.popular
-                      ? "bg-gradient-primary text-white"
-                      : "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white"
-                  }`}
-                >
-                  Get Started
-                </Button>
+                <Link to="/signup">
+                  <Button
+                    className={`w-full ${
+                      plan.popular
+                        ? "bg-gradient-primary text-white"
+                        : "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white"
+                    }`}
+                  >
+                    Get Started
+                  </Button>
+                </Link>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gradient-background">
+        <div className="container mx-auto px-4">
+          <h2 className="text-4xl font-bold text-center mb-16 text-text-primary">
+            What Our Users Say
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "Incentoro has helped us save thousands on our AI tools. The cashback program is fantastic!",
+                author: "Sarah Johnson",
+                role: "CTO, TechStart Inc.",
+              },
+              {
+                quote: "The seamless integration and automatic cashback deposits make this a no-brainer for any business.",
+                author: "Michael Chen",
+                role: "Founder, AI Solutions",
+              },
+              {
+                quote: "Best investment we've made this year. The premium plan pays for itself within the first month.",
+                author: "Emily Rodriguez",
+                role: "Operations Manager, DataFlow",
+              },
+            ].map((testimonial, index) => (
+              <Card key={index} className="p-8">
+                <p className="text-lg mb-4 text-text-secondary italic">"{testimonial.quote}"</p>
+                <p className="font-semibold text-text-primary">{testimonial.author}</p>
+                <p className="text-sm text-text-secondary">{testimonial.role}</p>
               </Card>
             ))}
           </div>
@@ -197,22 +225,5 @@ const Index = () => {
     </div>
   );
 };
-
-const CheckIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={2}
-      d="M5 13l4 4L19 7"
-    />
-  </svg>
-);
 
 export default Index;
