@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -25,9 +25,27 @@ const SignIn = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("Email not confirmed")) {
+          // Handle unconfirmed email case
+          const { error: resendError } = await supabase.auth.resend({
+            type: 'signup',
+            email,
+          });
 
-      navigate("/dashboard");
+          if (resendError) throw resendError;
+
+          toast({
+            title: "Email Not Verified",
+            description: "We've sent you a new verification email. Please check your inbox and verify your email address to sign in.",
+            duration: 6000,
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -70,10 +88,10 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Sign in</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Sign in to Incentoro</CardTitle>
           <CardDescription className="text-center">
             Enter your email and password to sign in
           </CardDescription>
@@ -111,7 +129,7 @@ const SignIn = () => {
             </div>
             <Button
               type="submit"
-              className="w-full bg-primary text-white"
+              className="w-full"
               disabled={loading}
             >
               {loading ? "Signing in..." : "Sign in"}
@@ -125,7 +143,7 @@ const SignIn = () => {
             >
               Forgot password?
             </Button>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Link to="/signup" className="text-primary hover:underline">
                 Sign up
