@@ -33,7 +33,14 @@ const SignIn = () => {
             email,
           });
 
-          if (resendError) throw resendError;
+          if (resendError) {
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Failed to resend verification email. Please try signing up again.",
+            });
+            return;
+          }
 
           toast({
             title: "Email Not Verified",
@@ -44,6 +51,11 @@ const SignIn = () => {
           throw error;
         }
       } else {
+        // Successful login
+        toast({
+          title: "Success",
+          description: "Successfully signed in!",
+        });
         navigate("/dashboard");
       }
     } catch (error: any) {
