@@ -1,11 +1,24 @@
-import { Search } from "lucide-react";
+import { Search, ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Marketplace = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Marketplace</h1>
+      <div className="flex items-center gap-4 mb-6">
+        <Button 
+          variant="ghost" 
+          size="icon"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-2xl font-bold">Marketplace</h1>
+      </div>
       
       <div className="relative mb-8">
         <Input 
