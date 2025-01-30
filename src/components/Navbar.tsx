@@ -22,18 +22,18 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {!isAuthPage && (
               <>
-                <Link to="/" className="text-text-secondary hover:text-primary transition-colors">
+                <Link to="/" className="text-gray-600 hover:text-primary transition-colors">
                   Home
                 </Link>
                 <button 
                   onClick={() => scrollToSection('how-it-works')} 
-                  className="text-text-secondary hover:text-primary transition-colors"
+                  className="text-gray-600 hover:text-primary transition-colors"
                 >
                   How It Works
                 </button>
                 <button 
                   onClick={() => scrollToSection('pricing')} 
-                  className="text-text-secondary hover:text-primary transition-colors"
+                  className="text-gray-600 hover:text-primary transition-colors"
                 >
                   Pricing
                 </button>
@@ -48,7 +48,7 @@ const Navbar = () => {
               </Button>
             </Link>
             <Link to="/signup">
-              <Button className="bg-gradient-primary text-white hover:opacity-90">
+              <Button className="bg-primary text-white hover:opacity-90">
                 Sign Up
               </Button>
             </Link>

@@ -1,219 +1,218 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { LayoutGrid, ShieldCheck, Star, DollarSign, Zap, Users, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check } from "lucide-react";
 
 const Index = () => {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-background">
+    <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-gradient-primary">
-        <div className="container mx-auto text-center text-white px-4">
-          <h1 className="text-5xl font-bold mb-6">
-            Maximize Your AI Investment
-            <br />
-            with Smart Cashback Rewards
-          </h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto text-white/90">
-            Join thousands of businesses saving smarter with Incentoro's cashback program
-            for AI tools and platforms.
-          </p>
-          <div className="flex justify-center gap-4">
-            <Link to="/signup">
-              <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
-                Start Saving Now
+      <section className="pt-32 pb-20 bg-gradient-to-r from-primary to-blue-500">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              Maximize Your Savings with Incentoro
+            </h1>
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              Join thousands of smart shoppers who earn cashback on every purchase. Start saving today!
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link to="/signup">
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
+                  Start Saving Now
+                </Button>
+              </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                className="text-white border-white hover:bg-white/10"
+                onClick={() => scrollToSection('how-it-works')}
+              >
+                Learn More
               </Button>
-            </Link>
-            <Link to="/signin">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white/10">
-                Sign In
-              </Button>
-            </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 bg-white">
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            {[
-              { value: "$2M+", label: "Cashback Rewarded", icon: DollarSign },
-              { value: "5000+", label: "Active Users", icon: Users },
-              { value: "50+", label: "AI Tools Supported", icon: Zap },
-            ].map((stat, index) => (
-              <Card key={index} className="p-8 hover:shadow-lg transition-shadow">
-                <stat.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <div className="text-4xl font-bold text-primary mb-2">{stat.value}</div>
-                <div className="text-lg text-text-secondary">{stat.label}</div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="py-20 bg-gradient-background">
-        <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 text-text-primary">
-            How <span className="text-primary">Incentoro</span> Works
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Sign Up for Free",
-                description:
-                  "Create your account in minutes and start exploring our platform",
-                step: "Step 1",
-                icon: LayoutGrid,
-              },
-              {
-                title: "Browse the Marketplace",
-                description:
-                  "Discover a curated selection of AI tools and services.",
-                step: "Step 2",
-                icon: Star,
-              },
-              {
-                title: "Earn Cashback",
-                description:
-                  "Get automatic cashback deposits for every tool you use through our platform",
-                step: "Step 3",
-                icon: ShieldCheck,
-              },
-            ].map((item, index) => (
-              <Card key={index} className="p-8 hover:shadow-lg transition-shadow">
-                <p className="text-primary-light mb-4">{item.step}</p>
-                <item.icon className="w-12 h-12 mx-auto mb-4 text-primary" />
-                <h3 className="text-xl font-semibold mb-2 text-text-primary">{item.title}</h3>
-                <p className="text-text-secondary">{item.description}</p>
-              </Card>
-            ))}
+            <Card>
+              <CardHeader>
+                <CardTitle>1. Sign Up</CardTitle>
+                <CardDescription>
+                  Create your free account in minutes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Join Incentoro and get instant access to cashback opportunities
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>2. Shop</CardTitle>
+                <CardDescription>
+                  Browse our marketplace
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Find the best deals and earn cashback on your purchases
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>3. Earn</CardTitle>
+                <CardDescription>
+                  Get cashback automatically
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Watch your savings grow with every purchase
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-white">
+      <section id="pricing" className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 text-text-primary">
-            Simple, Transparent Pricing
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-12">Simple, Transparent Pricing</h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {[
-              {
-                name: "Free",
-                price: "$0",
-                description: "Perfect for getting started",
-                features: [
-                  "5% cashback on all purchases",
-                  "Basic analytics",
-                  "Email support",
-                  "Access to marketplace",
-                ],
-              },
-              {
-                name: "Premium",
-                price: "$15",
-                description: "Best for growing businesses",
-                features: [
-                  "15-20% cashback on all purchases",
-                  "Advanced analytics",
-                  "Priority support",
-                  "API access",
-                  "Custom reports",
-                  "Early access to new tools",
-                ],
-                popular: true,
-              },
-            ].map((plan, index) => (
-              <Card
-                key={index}
-                className={`p-8 relative ${
-                  plan.popular
-                    ? "border-2 border-primary shadow-lg"
-                    : "border border-gray-200"
-                }`}
-              >
-                {plan.popular && (
-                  <span className="absolute top-0 right-0 bg-yellow-400 text-black px-4 py-1 text-sm font-semibold rounded-bl">
+            {/* Free Plan */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-2xl">Free Plan</CardTitle>
+                <CardDescription>Perfect for getting started</CardDescription>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">$0</span>
+                  <span className="text-gray-600">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>5% cashback on all purchases</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>Basic marketplace access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>Standard support</span>
+                  </li>
+                </ul>
+                <Link to="/signup" className="block mt-6">
+                  <Button className="w-full">Get Started</Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Premium Plan */}
+            <Card className="border-primary">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-2xl">Premium Plan</CardTitle>
+                  <span className="px-3 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full">
                     Popular
                   </span>
-                )}
-                <h3 className="text-2xl font-bold text-text-primary mb-2">
-                  {plan.name}
-                </h3>
-                <div className="text-4xl font-bold text-primary mb-4">
-                  {plan.price}
-                  <span className="text-lg">/mo</span>
                 </div>
-                <p className="text-text-secondary mb-6">{plan.description}</p>
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center text-text-secondary">
-                      <Check className="w-5 h-5 text-green-500 mr-2" />
-                      {feature}
-                    </li>
-                  ))}
+                <CardDescription>For serious savers</CardDescription>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">$15</span>
+                  <span className="text-gray-600">/month</span>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>15-20% cashback on all purchases</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>Priority marketplace access</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>24/7 Premium support</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-5 w-5 text-green-500" />
+                    <span>Exclusive deals and offers</span>
+                  </li>
                 </ul>
-                <Link to="/signup">
-                  <Button
-                    className={`w-full ${
-                      plan.popular
-                        ? "bg-gradient-primary text-white"
-                        : "bg-white text-primary border-2 border-primary hover:bg-primary hover:text-white"
-                    }`}
-                  >
-                    Get Started
-                  </Button>
+                <Link to="/signup" className="block mt-6">
+                  <Button className="w-full bg-primary">Upgrade Now</Button>
                 </Link>
-              </Card>
-            ))}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-background">
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-bold text-center mb-16 text-text-primary">
-            What Our Users Say
-          </h2>
+          <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                quote: "Incentoro has helped us save thousands on our AI tools. The cashback program is fantastic!",
-                author: "Sarah Johnson",
-                role: "CTO, TechStart Inc.",
-              },
-              {
-                quote: "The seamless integration and automatic cashback deposits make this a no-brainer for any business.",
-                author: "Michael Chen",
-                role: "Founder, AI Solutions",
-              },
-              {
-                quote: "Best investment we've made this year. The premium plan pays for itself within the first month.",
-                author: "Emily Rodriguez",
-                role: "Operations Manager, DataFlow",
-              },
-            ].map((testimonial, index) => (
-              <Card key={index} className="p-8">
-                <p className="text-lg mb-4 text-text-secondary italic">"{testimonial.quote}"</p>
-                <p className="font-semibold text-text-primary">{testimonial.author}</p>
-                <p className="text-sm text-text-secondary">{testimonial.role}</p>
-              </Card>
-            ))}
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-gray-600 mb-4">
+                  "I've saved hundreds of dollars since joining Incentoro. The cashback really adds up!"
+                </p>
+                <div className="font-semibold">Sarah M.</div>
+                <div className="text-sm text-gray-500">Premium Member</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-gray-600 mb-4">
+                  "The premium plan pays for itself with the increased cashback. Highly recommended!"
+                </p>
+                <div className="font-semibold">John D.</div>
+                <div className="text-sm text-gray-500">Premium Member</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-6">
+                <p className="text-gray-600 mb-4">
+                  "Easy to use and great customer service. I love watching my savings grow!"
+                </p>
+                <div className="font-semibold">Emily R.</div>
+                <div className="text-sm text-gray-500">Free Member</div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      {/* Call to Action */}
-      <section className="py-20 bg-gradient-primary text-white">
+      {/* CTA Section */}
+      <section className="py-20 bg-primary">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Start Saving?</h2>
-          <p className="text-xl text-white/90 mb-8">
-            Join thousands of businesses maximizing their AI investments with smart
-            cashback rewards.
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Ready to Start Saving?
+          </h2>
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Join Incentoro today and start earning cashback on every purchase.
           </p>
           <Link to="/signup">
             <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
