@@ -1,42 +1,35 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check } from "lucide-react";
+import { Check, ShoppingCart, CreditCard, TrendingUp } from "lucide-react";
 
 const Index = () => {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-to-r from-primary to-blue-500">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
               Maximize Your Savings with Incentoro
             </h1>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto animate-fade-in">
               Join thousands of smart shoppers who earn cashback on every purchase. Start saving today!
             </p>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center">
               <Link to="/signup">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 animate-scale-in">
                   Start Saving Now
                 </Button>
               </Link>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-white border-white hover:bg-white/10"
-                onClick={() => scrollToSection('how-it-works')}
-              >
-                Learn More
-              </Button>
+            </div>
+            {/* Added Illustration */}
+            <div className="mt-12 max-w-4xl mx-auto">
+              <img 
+                src="/placeholder.svg" 
+                alt="Shopping Savings Illustration" 
+                className="w-full h-auto rounded-lg shadow-xl animate-fade-in"
+              />
             </div>
           </div>
         </div>
@@ -47,8 +40,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <ShoppingCart className="w-12 h-12 text-primary" />
+                </div>
                 <CardTitle>1. Sign Up</CardTitle>
                 <CardDescription>
                   Create your free account in minutes
@@ -60,8 +56,11 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <CreditCard className="w-12 h-12 text-primary" />
+                </div>
                 <CardTitle>2. Shop</CardTitle>
                 <CardDescription>
                   Browse our marketplace
@@ -73,8 +72,11 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <TrendingUp className="w-12 h-12 text-primary" />
+                </div>
                 <CardTitle>3. Earn</CardTitle>
                 <CardDescription>
                   Get cashback automatically
@@ -165,6 +167,51 @@ const Index = () => {
                 </Link>
               </CardContent>
             </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Added Features Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Incentoro?</h2>
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <Check className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Instant Cashback</h3>
+                  <p className="text-gray-600">Earn rewards immediately on every eligible purchase</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <Check className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Wide Selection</h3>
+                  <p className="text-gray-600">Access thousands of products from top retailers</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="bg-primary/10 p-3 rounded-lg">
+                  <Check className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Easy Withdrawals</h3>
+                  <p className="text-gray-600">Get your earnings quickly and securely</p>
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <img 
+                src="/placeholder.svg" 
+                alt="Features Illustration" 
+                className="w-full h-auto rounded-lg shadow-xl"
+              />
+            </div>
           </div>
         </div>
       </section>
