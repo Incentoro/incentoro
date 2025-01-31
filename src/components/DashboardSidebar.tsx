@@ -47,23 +47,28 @@ const DashboardSidebar = () => {
   };
 
   return (
-    <div className="w-full md:w-64 bg-gray-100 min-h-screen p-4 dark:bg-gray-900 dark:text-white transition-colors duration-200">
+    <div className="w-full md:w-64 bg-white dark:bg-gray-900 min-h-screen p-4 transition-colors duration-200">
       {!isDashboardRoot && (
-        <Button
-          variant="ghost"
-          className="mb-4 w-full flex items-center gap-2 hover:bg-primary hover:text-white dark:hover:bg-primary-light fixed md:relative top-0 left-0 z-50 bg-gray-100 dark:bg-gray-900 md:bg-transparent"
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>Back</span>
-        </Button>
+        <div className="fixed top-20 left-4 z-50 md:static md:mb-4">
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back</span>
+          </Button>
+        </div>
       )}
       <div className="space-y-4 mt-16 md:mt-0">
         {menuItems.map((item, index) => (
           <Link
             key={index}
             to={item.path}
-            className="flex items-center space-x-3 p-3 rounded-lg hover:bg-primary hover:text-white transition-colors dark:hover:bg-primary-light"
+            className={`flex items-center space-x-3 p-3 rounded-lg transition-colors
+              ${location.pathname === item.path 
+                ? 'bg-primary text-white dark:bg-primary-light' 
+                : 'text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800'}`}
           >
             <item.icon className="w-5 h-5" />
             <span>{item.label}</span>
@@ -71,7 +76,7 @@ const DashboardSidebar = () => {
         ))}
         <button 
           onClick={handleSignOut}
-          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-primary hover:text-white transition-colors w-full dark:hover:bg-primary-light"
+          className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors w-full text-gray-900 dark:text-white"
         >
           <LogOut className="w-5 h-5" />
           <span>Sign Out</span>

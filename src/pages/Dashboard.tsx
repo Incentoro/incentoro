@@ -51,50 +51,56 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   });
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-background transition-colors duration-200">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       <DashboardSidebar />
       <div className="flex-1 p-4 md:p-8 mt-16 md:mt-0">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold dark:text-white">Dashboard Overview</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
           <Button
             variant="outline"
             size="icon"
             onClick={() => setDarkMode(!darkMode)}
-            className="h-10 w-10"
+            className="h-10 w-10 bg-white dark:bg-gray-800"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
-          <Card className="p-6 bg-card text-card-foreground">
+          <Card className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="h-5 w-5 text-success" />
-              <h2 className="text-xl font-semibold dark:text-white">Total Cashback Earned</h2>
+              <h2 className="text-xl font-semibold">Total Cashback Earned</h2>
             </div>
-            <p className="text-4xl font-bold text-primary dark:text-white">
+            <p className="text-4xl font-bold text-primary dark:text-primary-light">
               ${cashbackData?.reduce((sum, item) => sum + item.amount, 0)?.toFixed(2) || '0.00'}
             </p>
           </Card>
 
-          <Card className="p-6 bg-card text-card-foreground">
+          <Card className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-4">
               <TrendingDown className="h-5 w-5 text-destructive" />
-              <h2 className="text-xl font-semibold dark:text-white">Monthly Spending</h2>
+              <h2 className="text-xl font-semibold">Monthly Spending</h2>
             </div>
             <p className="text-4xl font-bold text-destructive">$0.00</p>
           </Card>
         </div>
 
-        <Card className="p-6 bg-card text-card-foreground">
-          <h2 className="text-xl font-semibold mb-4 dark:text-white">Cashback History</h2>
+        <Card className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+          <h2 className="text-xl font-semibold mb-4">Cashback History</h2>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={cashbackData || []}>
                 <CartesianGrid strokeDasharray="3 3" className="dark:opacity-20" />
-                <XAxis dataKey="month" className="dark:text-gray-400" />
-                <YAxis className="dark:text-gray-400" />
-                <Tooltip contentStyle={{ backgroundColor: darkMode ? '#1f2937' : 'white' }} />
+                <XAxis dataKey="month" stroke={darkMode ? "#fff" : "#000"} />
+                <YAxis stroke={darkMode ? "#fff" : "#000"} />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: darkMode ? '#1f2937' : 'white',
+                    border: '1px solid #374151',
+                    color: darkMode ? '#fff' : '#000'
+                  }} 
+                />
                 <Line 
                   type="monotone" 
                   dataKey="amount" 
