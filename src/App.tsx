@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import Index from "./pages/Index";
 import SignIn from "./pages/SignIn";
@@ -18,13 +18,17 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
+  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
+
   useEffect(() => {
-    // Check for dark mode preference on initial load
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (isDarkMode) {
+    if (darkMode) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
-  }, []);
+  }, [darkMode]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -38,10 +42,10 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard darkMode={darkMode} setDarkMode={setDarkMode} />} />
               <Route path="/marketplace" element={<Marketplace />} />
               <Route path="/earnings" element={<Earnings />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/settings" element={<Settings darkMode={darkMode} setDarkMode={setDarkMode} />} />
               <Route path="/withdrawal" element={<Withdrawal />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

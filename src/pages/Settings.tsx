@@ -8,23 +8,17 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-const Settings = () => {
+interface SettingsProps {
+  darkMode: boolean;
+  setDarkMode: (value: boolean) => void;
+}
+
+const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [darkMode, setDarkMode] = useState(localStorage.getItem('darkMode') === 'true');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
-
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('darkMode', 'true');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('darkMode', 'false');
-    }
-  }, [darkMode]);
 
   const { data: profile } = useQuery({
     queryKey: ['profile'],
@@ -109,7 +103,7 @@ const Settings = () => {
           <Button
             variant="outline"
             size="icon"
-            onClick={toggleDarkMode}
+            onClick={() => setDarkMode(!darkMode)}
             className="h-10 w-10 dark:border-gray-600 dark:hover:bg-gray-700"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

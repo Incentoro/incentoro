@@ -47,18 +47,18 @@ const DashboardSidebar = () => {
   };
 
   return (
-    <div className="w-64 bg-gray-100 min-h-screen p-4 dark:bg-gray-900 dark:text-white">
+    <div className="w-full md:w-64 bg-gray-100 min-h-screen p-4 dark:bg-gray-900 dark:text-white transition-colors duration-200">
       {!isDashboardRoot && (
         <Button
           variant="ghost"
-          className="mb-4 w-full flex items-center gap-2 hover:bg-primary hover:text-white"
+          className="mb-4 w-full flex items-center gap-2 hover:bg-primary hover:text-white dark:hover:bg-primary-light fixed md:relative top-0 left-0 z-50 bg-gray-100 dark:bg-gray-900 md:bg-transparent"
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back</span>
         </Button>
       )}
-      <div className="space-y-4">
+      <div className="space-y-4 mt-16 md:mt-0">
         {menuItems.map((item, index) => (
           <Link
             key={index}
