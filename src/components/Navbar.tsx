@@ -7,6 +7,11 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
+  const isDashboardPage = location.pathname.startsWith('/dashboard') || 
+                         location.pathname === '/marketplace' || 
+                         location.pathname === '/settings' ||
+                         location.pathname === '/withdrawal' ||
+                         location.pathname === '/earnings';
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -32,6 +37,21 @@ const Navbar = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (isDashboardPage) {
+    return (
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm dark:bg-gray-900 dark:border-b dark:border-gray-800">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link to="/dashboard" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="Incentoro" className="h-8 w-auto" />
+              <span className="text-2xl font-bold text-primary dark:text-white">Incentoro</span>
+            </Link>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm dark:bg-gray-900 dark:border-b dark:border-gray-800">
