@@ -20,14 +20,36 @@ const SignIn = () => {
     setLoading(true);
 
     try {
+      // First, check if the user exists
+      const { data: userExists } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .single();
+
+      if (!userExists) {
+        toast({
+          variant: "destructive",
+          title: "Account not found",
+          description: "No account found with this email. Please sign up first.",
+        });
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) {
-        if (error.message.includes("Email not confirmed")) {
-          // Handle unconfirmed email case
+        if (error.message.includes("Invalid login credentials")) {
+          toast({
+            variant: "destructive",
+            title: "Invalid credentials",
+            description: "Please check your email and password and try again.",
+          });
+        } else if (error.message.includes("Email not confirmed")) {
           const { error: resendError } = await supabase.auth.resend({
             type: 'signup',
             email,
@@ -51,7 +73,6 @@ const SignIn = () => {
           throw error;
         }
       } else {
-        // Successful login
         toast({
           title: "Success",
           description: "Successfully signed in!",
