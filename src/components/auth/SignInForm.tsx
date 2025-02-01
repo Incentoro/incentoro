@@ -19,36 +19,20 @@ export const SignInForm = () => {
     setLoading(true);
 
     try {
-      // First, check if the user exists
-      const { data: userExists } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', email)
-        .maybeSingle();
-
-      if (!userExists) {
-        toast({
-          variant: "destructive",
-          title: "Account not found",
-          description: "No account found with this email. Please sign up first.",
-        });
-        setLoading(false);
-        return;
-      }
-
-      const { error } = await supabase.auth.signInWithPassword({
+      // Attempt to sign in directly without checking profiles first
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) {
-        if (error.message.includes("Invalid login credentials")) {
+      if (signInError) {
+        if (signInError.message.includes("Invalid login credentials")) {
           toast({
             variant: "destructive",
             title: "Invalid credentials",
             description: "Please check your email and password and try again.",
           });
-        } else if (error.message.includes("Email not confirmed")) {
+        } else if (signInError.message.includes("Email not confirmed")) {
           const { error: resendError } = await supabase.auth.resend({
             type: 'signup',
             email,
@@ -69,9 +53,36 @@ export const SignInForm = () => {
             duration: 6000,
           });
         } else {
-          throw error;
+          throw signInError;
         }
       } else {
+        // After successful sign in, check if profile exists
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', email)
+          .maybeSingle();
+
+        // If profile doesn't exist, create it
+        if (!profile) {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert([
+                { 
+                  id: user.id,
+                  email: email,
+                  full_name: user.user_metadata.full_name || null
+                }
+              ]);
+
+            if (profileError) {
+              console.error("Error creating profile:", profileError);
+            }
+          }
+        }
+
         toast({
           title: "Success",
           description: "Successfully signed in!",
