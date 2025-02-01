@@ -5,21 +5,26 @@ import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap } from "
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       {/* Hero Section */}
-      <section className="pt-32 pb-20 bg-gradient-to-r from-primary to-blue-500">
+      <section className="pt-32 pb-20 bg-gradient-to-r from-primary to-blue-500 dark:from-blue-900 dark:to-blue-700">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in dark:text-white">
               Maximize Your Savings with Incentoro
             </h1>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto animate-fade-in">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto animate-fade-in dark:text-white/80">
               Join thousands of smart shoppers who earn cashback on every purchase. Start saving today!
             </p>
-            <div className="flex justify-center">
+            <div className="flex justify-center gap-4">
               <Link to="/signup">
-                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 animate-scale-in">
+                <Button size="lg" className="bg-white text-primary hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700 animate-scale-in">
                   Start Saving Now
+                </Button>
+              </Link>
+              <Link to="/signin">
+                <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10 dark:border-white dark:text-white dark:hover:bg-white/10 animate-scale-in">
+                  Sign In
                 </Button>
               </Link>
             </div>
@@ -28,54 +33,54 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 bg-gray-50">
+      <section id="how-it-works" className="py-20 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">How It Works</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <ShoppingCart className="w-12 h-12 text-primary" />
+                  <ShoppingCart className="w-12 h-12 text-primary dark:text-blue-400" />
                 </div>
-                <CardTitle>1. Sign Up</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">1. Sign Up</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   Create your free account in minutes
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Join Incentoro and get instant access to cashback opportunities
                 </p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <CreditCard className="w-12 h-12 text-primary" />
+                  <CreditCard className="w-12 h-12 text-primary dark:text-blue-400" />
                 </div>
-                <CardTitle>2. Shop</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">2. Shop</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   Browse our marketplace
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Find the best deals and earn cashback on your purchases
                 </p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-shadow">
+            <Card className="hover:shadow-lg transition-shadow dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <TrendingUp className="w-12 h-12 text-primary" />
+                  <TrendingUp className="w-12 h-12 text-primary dark:text-blue-400" />
                 </div>
-                <CardTitle>3. Earn</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">3. Earn</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   Get cashback automatically
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Watch your savings grow with every purchase
                 </p>
               </CardContent>
@@ -85,54 +90,54 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Incentoro?</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">Why Choose Incentoro?</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1 dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <Shield className="w-10 h-10 text-primary" />
+                  <Shield className="w-10 h-10 text-primary dark:text-blue-400" />
                 </div>
-                <CardTitle>Secure Transactions</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">Secure Transactions</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   Your payments are protected
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Bank-level security ensures your transactions are always safe
                 </p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1 dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <Gift className="w-10 h-10 text-primary" />
+                  <Gift className="w-10 h-10 text-primary dark:text-blue-400" />
                 </div>
-                <CardTitle>Instant Rewards</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">Instant Rewards</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   Get cashback immediately
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   No waiting periods - earn and withdraw your rewards instantly
                 </p>
               </CardContent>
             </Card>
-            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1 dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-center mb-4">
-                  <Zap className="w-10 h-10 text-primary" />
+                  <Zap className="w-10 h-10 text-primary dark:text-blue-400" />
                 </div>
-                <CardTitle>Smart Savings</CardTitle>
-                <CardDescription>
+                <CardTitle className="dark:text-white">Smart Savings</CardTitle>
+                <CardDescription className="dark:text-gray-300">
                   Maximize your benefits
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">
+                <p className="text-gray-600 dark:text-gray-300">
                   Our platform automatically finds the best cashback rates for you
                 </p>
               </CardContent>
@@ -142,18 +147,17 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20">
+      <section id="pricing" className="py-20 dark:bg-gray-800">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Simple, Transparent Pricing</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">Simple, Transparent Pricing</h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <Card>
+            <Card className="dark:bg-gray-700">
               <CardHeader>
-                <CardTitle className="text-2xl">Free Plan</CardTitle>
-                <CardDescription>Perfect for getting started</CardDescription>
+                <CardTitle className="text-2xl dark:text-white">Free Plan</CardTitle>
+                <CardDescription className="dark:text-gray-300">Perfect for getting started</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">$0</span>
-                  <span className="text-gray-600">/month</span>
+                  <span className="text-4xl font-bold dark:text-white">$0</span>
+                  <span className="text-gray-600 dark:text-gray-300">/month</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -177,19 +181,18 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            {/* Premium Plan */}
-            <Card className="border-primary">
+            <Card className="border-primary dark:bg-gray-700">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-2xl">Premium Plan</CardTitle>
+                  <CardTitle className="text-2xl dark:text-white">Premium Plan</CardTitle>
                   <span className="px-3 py-1 text-xs font-semibold text-white bg-yellow-500 rounded-full">
                     Popular
                   </span>
                 </div>
-                <CardDescription>For serious savers</CardDescription>
+                <CardDescription className="dark:text-gray-300">For serious savers</CardDescription>
                 <div className="mt-4">
-                  <span className="text-4xl font-bold">$15</span>
-                  <span className="text-gray-600">/month</span>
+                  <span className="text-4xl font-bold dark:text-white">$15</span>
+                  <span className="text-gray-600 dark:text-gray-300">/month</span>
                 </div>
               </CardHeader>
               <CardContent>
@@ -221,35 +224,35 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
+          <h2 className="text-3xl font-bold text-center mb-12 dark:text-white">What Our Users Say</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <Card>
+            <Card className="dark:bg-gray-700">
               <CardContent className="pt-6">
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   "I've saved hundreds of dollars since joining Incentoro. The cashback really adds up!"
                 </p>
-                <div className="font-semibold">Sarah M.</div>
-                <div className="text-sm text-gray-500">Premium Member</div>
+                <div className="font-semibold dark:text-white">Sarah M.</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Premium Member</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="dark:bg-gray-700">
               <CardContent className="pt-6">
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   "The premium plan pays for itself with the increased cashback. Highly recommended!"
                 </p>
-                <div className="font-semibold">John D.</div>
-                <div className="text-sm text-gray-500">Premium Member</div>
+                <div className="font-semibold dark:text-white">John D.</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Premium Member</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="dark:bg-gray-700">
               <CardContent className="pt-6">
-                <p className="text-gray-600 mb-4">
+                <p className="text-gray-600 dark:text-gray-300 mb-4">
                   "Easy to use and great customer service. I love watching my savings grow!"
                 </p>
-                <div className="font-semibold">Emily R.</div>
-                <div className="text-sm text-gray-500">Free Member</div>
+                <div className="font-semibold dark:text-white">Emily R.</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">Free Member</div>
               </CardContent>
             </Card>
           </div>
@@ -257,7 +260,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary">
+      <section className="py-20 bg-primary dark:bg-blue-900">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">
             Ready to Start Saving?
@@ -265,11 +268,18 @@ const Index = () => {
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
             Join Incentoro today and start earning cashback on every purchase.
           </p>
-          <Link to="/signup">
-            <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
-              Get Started Now
-            </Button>
-          </Link>
+          <div className="flex justify-center gap-4">
+            <Link to="/signup">
+              <Button size="lg" className="bg-white text-primary hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700">
+                Get Started Now
+              </Button>
+            </Link>
+            <Link to="/signin">
+              <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10">
+                Sign In
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
