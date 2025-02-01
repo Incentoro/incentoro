@@ -44,7 +44,7 @@ const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <img src="/logo.png" alt="Incentoro" className="h-8 w-auto" />
+              <img src="https://media-hosting.imagekit.io//d13052973b7c4465/1738341678348.png" alt="Incentoro" className="h-8 w-auto" />
               <span className="text-2xl font-bold text-primary dark:text-white">Incentoro</span>
             </Link>
           </div>
@@ -58,7 +58,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <img src="/logo.png" alt="Incentoro" className="h-8 w-auto" />
+            <img src="https://media-hosting.imagekit.io//d13052973b7c4465/1738341678348.png" alt="Incentoro" className="h-8 w-auto" />
             <span className="text-2xl font-bold text-primary dark:text-white">Incentoro</span>
           </Link>
           <div className="hidden md:flex items-center space-x-8">

@@ -3,10 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Moon, Sun } from "lucide-react";
+import { ArrowLeft, Moon, Sun, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface SettingsProps {
   darkMode: boolean;
@@ -19,6 +30,7 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const { data: profile } = useQuery({
     queryKey: ['profile'],
@@ -36,10 +48,6 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
       return data;
     }
   });
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-  };
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
@@ -74,6 +82,33 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
       });
     } finally {
       setIsChangingPassword(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeletingAccount(true);
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(
+        (await supabase.auth.getUser()).data.user?.id || ''
+      );
+
+      if (deleteError) throw deleteError;
+
+      toast({
+        title: "Account Deleted",
+        description: "Your account has been successfully deleted. You can always create a new account with the same email.",
+      });
+
+      await supabase.auth.signOut();
+      navigate('/');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message,
+      });
+    } finally {
+      setIsDeletingAccount(false);
     }
   };
 
@@ -135,6 +170,37 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
               Change Password
             </Button>
           </div>
+        </div>
+
+        <div>
+          <h2 className="text-lg font-semibold mb-4 dark:text-white">Delete Account</h2>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive"
+                className="flex items-center gap-2"
+                disabled={isDeletingAccount}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Account
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                  You can always create a new account with the same email address later.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount}>
+                  Delete Account
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </Card>
     </div>

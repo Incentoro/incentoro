@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, ShoppingCart, CreditCard, TrendingUp } from "lucide-react";
+import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap } from "lucide-react";
 
 const Index = () => {
   return (
@@ -22,14 +22,6 @@ const Index = () => {
                   Start Saving Now
                 </Button>
               </Link>
-            </div>
-            {/* Added Illustration */}
-            <div className="mt-12 max-w-4xl mx-auto">
-              <img 
-                src="/placeholder.svg" 
-                alt="Shopping Savings Illustration" 
-                className="w-full h-auto rounded-lg shadow-xl animate-fade-in"
-              />
             </div>
           </div>
         </div>
@@ -85,6 +77,63 @@ const Index = () => {
               <CardContent>
                 <p className="text-gray-600">
                   Watch your savings grow with every purchase
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Incentoro?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <Shield className="w-10 h-10 text-primary" />
+                </div>
+                <CardTitle>Secure Transactions</CardTitle>
+                <CardDescription>
+                  Your payments are protected
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Bank-level security ensures your transactions are always safe
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <Gift className="w-10 h-10 text-primary" />
+                </div>
+                <CardTitle>Instant Rewards</CardTitle>
+                <CardDescription>
+                  Get cashback immediately
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  No waiting periods - earn and withdraw your rewards instantly
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-all hover:-translate-y-1">
+              <CardHeader>
+                <div className="flex items-center justify-center mb-4">
+                  <Zap className="w-10 h-10 text-primary" />
+                </div>
+                <CardTitle>Smart Savings</CardTitle>
+                <CardDescription>
+                  Maximize your benefits
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Our platform automatically finds the best cashback rates for you
                 </p>
               </CardContent>
             </Card>
@@ -167,51 +216,6 @@ const Index = () => {
                 </Link>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Added Features Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why Choose Incentoro?</h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  <Check className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Instant Cashback</h3>
-                  <p className="text-gray-600">Earn rewards immediately on every eligible purchase</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  <Check className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Wide Selection</h3>
-                  <p className="text-gray-600">Access thousands of products from top retailers</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="bg-primary/10 p-3 rounded-lg">
-                  <Check className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Easy Withdrawals</h3>
-                  <p className="text-gray-600">Get your earnings quickly and securely</p>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <img 
-                src="/placeholder.svg" 
-                alt="Features Illustration" 
-                className="w-full h-auto rounded-lg shadow-xl"
-              />
-            </div>
           </div>
         </div>
       </section>
