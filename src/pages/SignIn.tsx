@@ -12,6 +12,7 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resetEmailSentAt, setResetEmailSentAt] = useState<Date | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -25,7 +26,7 @@ const SignIn = () => {
         .from('profiles')
         .select('id')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
       if (!userExists) {
         toast({
@@ -100,6 +101,22 @@ const SignIn = () => {
       return;
     }
 
+    // Check if we need to wait before sending another reset email
+    if (resetEmailSentAt) {
+      const waitTimeMs = 60000; // 60 seconds
+      const timeSinceLastSend = Date.now() - resetEmailSentAt.getTime();
+      
+      if (timeSinceLastSend < waitTimeMs) {
+        const remainingSeconds = Math.ceil((waitTimeMs - timeSinceLastSend) / 1000);
+        toast({
+          variant: "destructive",
+          title: "Please wait",
+          description: `You can request another reset email in ${remainingSeconds} seconds.`,
+        });
+        return;
+      }
+    }
+
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
@@ -107,16 +124,25 @@ const SignIn = () => {
 
       if (error) throw error;
 
+      setResetEmailSentAt(new Date());
       toast({
         title: "Password reset email sent",
         description: "Check your email for the password reset link",
       });
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: error.message,
-      });
+      if (error.message.includes("over_email_send_rate_limit")) {
+        toast({
+          variant: "destructive",
+          title: "Too many requests",
+          description: "Please wait a minute before requesting another reset email.",
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: error.message,
+        });
+      }
     }
   };
 
