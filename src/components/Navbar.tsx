@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Globe } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
@@ -40,12 +41,12 @@ const Navbar = () => {
 
   if (isDashboardPage) {
     return (
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm dark:bg-gray-900 dark:border-b dark:border-gray-800">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/dashboard" className="flex items-center space-x-2">
-              <img src="https://media-hosting.imagekit.io//d13052973b7c4465/1738341678348.png" alt="Incentoro" className="h-8 w-auto" />
-              <span className="text-2xl font-bold text-primary dark:text-white">Incentoro</span>
+              <Globe className="h-8 w-8 text-primary" />
+              <span className="text-2xl font-bold text-primary">Incentoro</span>
             </Link>
           </div>
         </div>
@@ -54,28 +55,28 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm dark:bg-gray-900 dark:border-b dark:border-gray-800">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <img src="https://media-hosting.imagekit.io//d13052973b7c4465/1738341678348.png" alt="Incentoro" className="h-8 w-auto" />
-            <span className="text-2xl font-bold text-primary dark:text-white">Incentoro</span>
+            <Globe className="h-8 w-8 text-primary" />
+            <span className="text-2xl font-bold text-primary">Incentoro</span>
           </Link>
           <div className="hidden md:flex items-center space-x-8">
             {!isAuthPage && (
               <>
-                <Link to="/" className="text-gray-600 hover:text-primary transition-colors dark:text-gray-300 dark:hover:text-white">
+                <Link to="/" className="text-gray-600 hover:text-primary transition-colors">
                   Home
                 </Link>
                 <button 
                   onClick={() => scrollToSection('how-it-works')} 
-                  className="text-gray-600 hover:text-primary transition-colors dark:text-gray-300 dark:hover:text-white"
+                  className="text-gray-600 hover:text-primary transition-colors"
                 >
                   How It Works
                 </button>
                 <button 
                   onClick={() => scrollToSection('pricing')} 
-                  className="text-gray-600 hover:text-primary transition-colors dark:text-gray-300 dark:hover:text-white"
+                  className="text-gray-600 hover:text-primary transition-colors"
                 >
                   Pricing
                 </button>
@@ -84,13 +85,13 @@ const Navbar = () => {
             <Link to="/signin">
               <Button 
                 variant="outline" 
-                className="border-primary text-primary hover:bg-primary hover:text-white transition-colors dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-gray-900"
+                className="border-primary text-primary hover:bg-primary hover:text-white transition-colors"
               >
                 Sign In
               </Button>
             </Link>
             <Link to="/signup">
-              <Button className="bg-primary text-white hover:bg-primary-light dark:bg-white dark:text-gray-900 dark:hover:bg-gray-200">
+              <Button className="bg-primary text-white hover:bg-primary-light">
                 Sign Up
               </Button>
             </Link>
