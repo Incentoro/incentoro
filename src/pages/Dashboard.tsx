@@ -1,7 +1,8 @@
+import { useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, TrendingUp, TrendingDown, Link, History } from "lucide-react";
+import { Moon, Sun, TrendingUp, Link, History } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -112,7 +113,7 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   });
 
   // Process cashback data for the chart
-  const cashbackData: CashbackDataPoint[] = React.useMemo(() => {
+  const cashbackData = useMemo(() => {
     if (!cashbackHistory) return [];
 
     const monthlyData = cashbackHistory.reduce((acc: { [key: string]: number }, transaction) => {
