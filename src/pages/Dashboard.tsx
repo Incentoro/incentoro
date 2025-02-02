@@ -40,6 +40,8 @@ interface CashbackHistory {
   created_at: string;
   status: string;
   description: string;
+  source_transaction_id?: string;
+  cookie_period_end?: string;
 }
 
 interface CashbackDataPoint {
@@ -132,22 +134,53 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
     }
   });
 
-  // Fetch cashback history
+  // Fetch cashback history including PartnerStack transactions
   const { data: cashbackHistory } = useQuery({
     queryKey: ['cashback_history'],
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('Not authenticated');
 
-      const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .eq('type', 'cashback')
-        .order('created_at', { ascending: false });
+      // Fetch both regular transactions and PartnerStack purchases
+      const [transactionsResponse, purchasesResponse] = await Promise.all([
+        supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('type', 'cashback')
+          .order('created_at', { ascending: false }),
+        
+        supabase
+          .from('purchases')
+          .select(`
+            id,
+            amount,
+            cashback_amount,
+            status,
+            created_at,
+            external_status,
+            marketplace_tools (name)
+          `)
+          .eq('user_id', session.user.id)
+          .eq('affiliate_platform', 'partnerstack')
+          .order('created_at', { ascending: false })
+      ]);
 
-      if (error) throw error;
-      return data;
+      if (transactionsResponse.error) throw transactionsResponse.error;
+      if (purchasesResponse.error) throw purchasesResponse.error;
+
+      // Combine and format the data
+      const partnerStackTransactions = purchasesResponse.data.map(purchase => ({
+        id: purchase.id,
+        amount: purchase.cashback_amount,
+        created_at: purchase.created_at,
+        status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
+        description: `Cashback from ${purchase.marketplace_tools.name}`,
+      }));
+
+      return [...transactionsResponse.data, ...partnerStackTransactions].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
     },
     retry: false,
     meta: {
@@ -161,13 +194,33 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
     }
   });
 
+  // Calculate total confirmed and pending cashback
+  const { totalConfirmed, totalPending } = useMemo(() => {
+    if (!cashbackHistory) return { totalConfirmed: 0, totalPending: 0 };
+
+    return cashbackHistory.reduce(
+      (acc, transaction) => {
+        const amount = Number(transaction.amount);
+        if (transaction.status === 'completed') {
+          acc.totalConfirmed += amount;
+        } else if (transaction.status === 'pending') {
+          acc.totalPending += amount;
+        }
+        return acc;
+      },
+      { totalConfirmed: 0, totalPending: 0 }
+    );
+  }, [cashbackHistory]);
+
   // Process cashback data for the chart
   const cashbackData = useMemo(() => {
     if (!cashbackHistory) return [];
 
     const monthlyData = cashbackHistory.reduce((acc: { [key: string]: number }, transaction) => {
-      const month = new Date(transaction.created_at).toLocaleString('default', { month: 'short' });
-      acc[month] = (acc[month] || 0) + Number(transaction.amount);
+      if (transaction.status === 'completed') {
+        const month = new Date(transaction.created_at).toLocaleString('default', { month: 'short' });
+        acc[month] = (acc[month] || 0) + Number(transaction.amount);
+      }
       return acc;
     }, {});
 
@@ -214,21 +267,31 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="h-5 w-5 text-success" />
-              <h2 className="text-lg md:text-xl font-semibold">Total Cashback Earned</h2>
+              <h2 className="text-lg md:text-xl font-semibold">Total Confirmed Cashback</h2>
             </div>
             <p className="text-2xl md:text-4xl font-bold text-primary dark:text-primary-light">
-              ${cashbackHistory?.reduce((sum, item) => sum + Number(item.amount), 0)?.toFixed(2) || '0.00'}
+              ${totalConfirmed.toFixed(2)}
+            </p>
+          </Card>
+
+          <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+            <div className="flex items-center gap-2 mb-4">
+              <History className="h-5 w-5 text-yellow-500" />
+              <h2 className="text-lg md:text-xl font-semibold">Pending Cashback</h2>
+            </div>
+            <p className="text-2xl md:text-4xl font-bold text-yellow-500">
+              ${totalPending.toFixed(2)}
             </p>
           </Card>
 
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-4">
               <Link className="h-5 w-5 text-blue-500" />
-              <h2 className="text-lg md:text-xl font-semibold">Total Affiliate Links</h2>
+              <h2 className="text-lg md:text-xl font-semibold">Active Affiliate Links</h2>
             </div>
             <p className="text-2xl md:text-4xl font-bold text-blue-500">
               {affiliateLinks?.length || 0}
