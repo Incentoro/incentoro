@@ -156,9 +156,12 @@ export type Database = {
       purchases: {
         Row: {
           affiliate_link_id: string
+          affiliate_platform: string | null
           amount: number
           cashback_amount: number
           created_at: string
+          external_status: string | null
+          external_transaction_id: string | null
           id: string
           is_subscription: boolean | null
           next_recurring_date: string | null
@@ -171,9 +174,12 @@ export type Database = {
         }
         Insert: {
           affiliate_link_id: string
+          affiliate_platform?: string | null
           amount: number
           cashback_amount: number
           created_at?: string
+          external_status?: string | null
+          external_transaction_id?: string | null
           id?: string
           is_subscription?: boolean | null
           next_recurring_date?: string | null
@@ -186,9 +192,12 @@ export type Database = {
         }
         Update: {
           affiliate_link_id?: string
+          affiliate_platform?: string | null
           amount?: number
           cashback_amount?: number
           created_at?: string
+          external_status?: string | null
+          external_transaction_id?: string | null
           id?: string
           is_subscription?: boolean | null
           next_recurring_date?: string | null
@@ -319,6 +328,10 @@ export type Database = {
         Returns: undefined
       }
       scheduled_process_recurring_cashback: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      sync_partnerstack_transactions: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
