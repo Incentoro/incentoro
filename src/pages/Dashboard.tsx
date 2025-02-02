@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
@@ -121,12 +121,14 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
       return linksWithClicks;
     },
     retry: false,
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load affiliate links",
-      });
+    meta: {
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load affiliate links",
+        });
+      }
     }
   });
 
@@ -148,12 +150,14 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
       return data;
     },
     retry: false,
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load cashback history",
-      });
+    meta: {
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load cashback history",
+        });
+      }
     }
   });
 
