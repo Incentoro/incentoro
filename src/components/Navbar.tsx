@@ -1,12 +1,14 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Globe } from "lucide-react";
+import { Session } from "@supabase/supabase-js";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [session, setSession] = useState<Session | null>(null);
   const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
   const isDashboardPage = location.pathname.startsWith('/dashboard') || 
                          location.pathname === '/marketplace' || 
@@ -15,21 +17,35 @@ const Navbar = () => {
                          location.pathname === '/earnings';
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session && ['/signin', '/signup', '/'].includes(location.pathname)) {
-        navigate('/dashboard');
-      }
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
       if (session && ['/signin', '/signup', '/'].includes(location.pathname)) {
         navigate('/dashboard');
       }
     });
 
-    checkAuth();
-    return () => subscription.unsubscribe();
+    // Set up auth state listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setSession(session);
+      
+      if (event === 'SIGNED_IN') {
+        if (['/signin', '/signup', '/'].includes(location.pathname)) {
+          navigate('/dashboard');
+        }
+      } else if (event === 'SIGNED_OUT') {
+        navigate('/');
+      } else if (event === 'TOKEN_REFRESHED') {
+        console.log('Token has been refreshed');
+      }
+    });
+
+    // Cleanup subscription
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [location.pathname, navigate]);
 
   const scrollToSection = (sectionId: string) => {
@@ -82,19 +98,23 @@ const Navbar = () => {
                 </button>
               </>
             )}
-            <Link to="/signin">
-              <Button 
-                variant="outline" 
-                className="border-primary text-primary hover:bg-primary hover:text-white transition-colors"
-              >
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="bg-primary text-white hover:bg-primary-light">
-                Sign Up
-              </Button>
-            </Link>
+            {!session ? (
+              <>
+                <Link to="/signin">
+                  <Button 
+                    variant="outline" 
+                    className="border-primary text-primary hover:bg-primary hover:text-white transition-colors"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-primary text-white hover:bg-primary-light">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            ) : null}
           </div>
         </div>
       </div>
