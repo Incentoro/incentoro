@@ -276,9 +276,11 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          cookie_period_end: string | null
           created_at: string
           description: string | null
           id: string
+          source_transaction_id: string | null
           status: string
           type: string
           updated_at: string
@@ -286,9 +288,11 @@ export type Database = {
         }
         Insert: {
           amount: number
+          cookie_period_end?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          source_transaction_id?: string | null
           status?: string
           type: string
           updated_at?: string
@@ -296,15 +300,24 @@ export type Database = {
         }
         Update: {
           amount?: number
+          cookie_period_end?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          source_transaction_id?: string | null
           status?: string
           type?: string
           updated_at?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "transactions_source_transaction_id_fkey"
+            columns: ["source_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "purchases"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "transactions_user_id_fkey"
             columns: ["user_id"]
