@@ -11,11 +11,13 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "./ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const DashboardSidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const isDashboardRoot = location.pathname === "/dashboard";
 
   const menuItems = [
@@ -47,9 +49,9 @@ const DashboardSidebar = () => {
   };
 
   return (
-    <div className="w-full md:w-64 bg-white dark:bg-gray-900 min-h-screen p-4 transition-colors duration-200">
-      {!isDashboardRoot && (
-        <div className="fixed top-20 left-4 z-50 md:static md:mb-4">
+    <div className="w-full md:w-64 bg-white dark:bg-gray-900 min-h-[calc(100vh-4rem)] md:min-h-screen p-4 transition-colors duration-200 border-r border-gray-200 dark:border-gray-800">
+      {!isDashboardRoot && isMobile && (
+        <div className="mb-4">
           <Button
             variant="outline"
             className="flex items-center gap-2 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
@@ -60,7 +62,7 @@ const DashboardSidebar = () => {
           </Button>
         </div>
       )}
-      <div className="space-y-4 mt-16 md:mt-0">
+      <div className="space-y-2">
         {menuItems.map((item, index) => (
           <Link
             key={index}

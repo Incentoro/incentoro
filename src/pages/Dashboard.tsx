@@ -13,6 +13,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface DashboardProps {
   darkMode: boolean;
@@ -20,6 +21,8 @@ interface DashboardProps {
 }
 
 const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
+  const isMobile = useIsMobile();
+
   const { data: cashbackData } = useQuery({
     queryKey: ['cashback_stats'],
     queryFn: async () => {
@@ -53,47 +56,56 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       <DashboardSidebar />
-      <div className="flex-1 p-4 md:p-8 mt-16 md:mt-0">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Dashboard Overview</h1>
+      <div className="flex-1 p-4 md:p-8 mt-0">
+        <div className="flex justify-between items-center mb-6 sticky top-16 bg-white dark:bg-gray-900 z-10 py-4">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+            Dashboard Overview
+          </h1>
           <Button
             variant="outline"
             size="icon"
             onClick={() => setDarkMode(!darkMode)}
-            className="h-10 w-10 bg-white dark:bg-gray-800"
+            className="h-8 w-8 md:h-10 md:w-10 bg-white dark:bg-gray-800"
           >
             {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
-          <Card className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="h-5 w-5 text-success" />
-              <h2 className="text-xl font-semibold">Total Cashback Earned</h2>
+              <h2 className="text-lg md:text-xl font-semibold">Total Cashback Earned</h2>
             </div>
-            <p className="text-4xl font-bold text-primary dark:text-primary-light">
+            <p className="text-2xl md:text-4xl font-bold text-primary dark:text-primary-light">
               ${cashbackData?.reduce((sum, item) => sum + item.amount, 0)?.toFixed(2) || '0.00'}
             </p>
           </Card>
 
-          <Card className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+          <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-4">
               <TrendingDown className="h-5 w-5 text-destructive" />
-              <h2 className="text-xl font-semibold">Monthly Spending</h2>
+              <h2 className="text-lg md:text-xl font-semibold">Monthly Spending</h2>
             </div>
-            <p className="text-4xl font-bold text-destructive">$0.00</p>
+            <p className="text-2xl md:text-4xl font-bold text-destructive">$0.00</p>
           </Card>
         </div>
 
-        <Card className="p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-          <h2 className="text-xl font-semibold mb-4">Cashback History</h2>
-          <div className="h-[300px]">
+        <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
+          <h2 className="text-lg md:text-xl font-semibold mb-4">Cashback History</h2>
+          <div className="h-[250px] md:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={cashbackData || []}>
                 <CartesianGrid strokeDasharray="3 3" className="dark:opacity-20" />
-                <XAxis dataKey="month" stroke={darkMode ? "#fff" : "#000"} />
-                <YAxis stroke={darkMode ? "#fff" : "#000"} />
+                <XAxis 
+                  dataKey="month" 
+                  stroke={darkMode ? "#fff" : "#000"}
+                  tick={{ fontSize: isMobile ? 12 : 14 }}
+                />
+                <YAxis 
+                  stroke={darkMode ? "#fff" : "#000"}
+                  tick={{ fontSize: isMobile ? 12 : 14 }}
+                />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: darkMode ? '#1f2937' : 'white',
