@@ -9,6 +9,90 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      affiliate_links: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          unique_code: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          unique_code: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          unique_code?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_links_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_tools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affiliate_links_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      click_tracking: {
+        Row: {
+          affiliate_link_id: string
+          clicked_at: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          affiliate_link_id: string
+          clicked_at?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          affiliate_link_id?: string
+          clicked_at?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "click_tracking_affiliate_link_id_fkey"
+            columns: ["affiliate_link_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "click_tracking_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketplace_tools: {
         Row: {
           cashback_percentage: number
@@ -68,6 +152,76 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      purchases: {
+        Row: {
+          affiliate_link_id: string
+          amount: number
+          cashback_amount: number
+          created_at: string
+          id: string
+          is_subscription: boolean | null
+          next_recurring_date: string | null
+          product_id: string
+          purchased_at: string
+          status: string
+          subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          affiliate_link_id: string
+          amount: number
+          cashback_amount: number
+          created_at?: string
+          id?: string
+          is_subscription?: boolean | null
+          next_recurring_date?: string | null
+          product_id: string
+          purchased_at?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          affiliate_link_id?: string
+          amount?: number
+          cashback_amount?: number
+          created_at?: string
+          id?: string
+          is_subscription?: boolean | null
+          next_recurring_date?: string | null
+          product_id?: string
+          purchased_at?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_affiliate_link_id_fkey"
+            columns: ["affiliate_link_id"]
+            isOneToOne: false
+            referencedRelation: "affiliate_links"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchases_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_tools"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchases_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -156,7 +310,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_unique_affiliate_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      process_recurring_cashback: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      scheduled_process_recurring_cashback: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
