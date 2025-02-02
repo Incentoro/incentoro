@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface DashboardProps {
   darkMode: boolean;
@@ -49,13 +50,41 @@ interface CashbackDataPoint {
 const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Check authentication status
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error || !session) {
+        toast({
+          variant: "destructive",
+          title: "Authentication Error",
+          description: "Please sign in to access the dashboard",
+        });
+        navigate("/signin");
+      }
+    };
+    
+    checkAuth();
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        navigate("/signin");
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [navigate, toast]);
 
   // Fetch affiliate links with click counts
   const { data: affiliateLinks } = useQuery({
     queryKey: ['affiliate_links'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
 
       const { data, error } = await supabase
         .from('affiliate_links')
@@ -69,7 +98,7 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
             cashback_percentage
           )
         `)
-        .eq('user_id', user.id);
+        .eq('user_id', session.user.id);
 
       if (error) throw error;
 
@@ -90,6 +119,14 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
       );
 
       return linksWithClicks;
+    },
+    retry: false,
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load affiliate links",
+      });
     }
   });
 
@@ -97,18 +134,26 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   const { data: cashbackHistory } = useQuery({
     queryKey: ['cashback_history'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Not authenticated');
 
       const { data, error } = await supabase
         .from('transactions')
         .select('*')
-        .eq('user_id', user.id)
+        .eq('user_id', session.user.id)
         .eq('type', 'cashback')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data;
+    },
+    retry: false,
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to load cashback history",
+      });
     }
   });
 
