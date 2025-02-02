@@ -40,6 +40,11 @@ interface CashbackHistory {
   description: string;
 }
 
+interface CashbackDataPoint {
+  month: string;
+  amount: number;
+}
+
 const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
@@ -105,6 +110,22 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
       return data;
     }
   });
+
+  // Process cashback data for the chart
+  const cashbackData: CashbackDataPoint[] = React.useMemo(() => {
+    if (!cashbackHistory) return [];
+
+    const monthlyData = cashbackHistory.reduce((acc: { [key: string]: number }, transaction) => {
+      const month = new Date(transaction.created_at).toLocaleString('default', { month: 'short' });
+      acc[month] = (acc[month] || 0) + Number(transaction.amount);
+      return acc;
+    }, {});
+
+    return Object.entries(monthlyData).map(([month, amount]) => ({
+      month,
+      amount
+    }));
+  }, [cashbackHistory]);
 
   const copyAffiliateLink = async (code: string) => {
     const baseUrl = window.location.origin;
@@ -200,7 +221,7 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
           </div>
           <div className="h-[250px] md:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={cashbackData || []}>
+              <LineChart data={cashbackData}>
                 <CartesianGrid strokeDasharray="3 3" className="dark:opacity-20" />
                 <XAxis 
                   dataKey="month" 
