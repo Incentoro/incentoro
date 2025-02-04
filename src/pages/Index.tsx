@@ -1,78 +1,141 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap, Star } from "lucide-react";
+import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap, Star, Info } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const Index = () => {
   const upcomingTools = [
     {
       name: "Monday.com",
       description: "Project management and team collaboration platform",
+      detailedDescription: "Monday.com is a versatile work OS that enables teams to build custom workflows, manage projects, and track everything in one place. Features include timeline views, automation, integrations, and real-time collaboration tools.",
       price: 8,
-      cashback: 20,
+      cashback: {
+        free: 5,
+        premium: 20
+      },
       category: "Productivity"
     },
     {
       name: "Jasper AI",
       description: "AI-powered content creation and copywriting",
+      detailedDescription: "Jasper AI is an advanced AI writing assistant that helps create high-quality content for blogs, social media, and marketing materials. It uses GPT technology to generate human-like text and supports multiple languages.",
       price: 24,
-      cashback: 15,
+      cashback: {
+        free: 5,
+        premium: 15
+      },
       category: "AI Tools"
     },
     {
       name: "Semrush",
       description: "All-in-one SEO and content marketing suite",
+      detailedDescription: "Semrush provides comprehensive SEO tools for keyword research, competitor analysis, site audits, and content optimization. It helps improve search rankings and track marketing campaign performance.",
       price: 119.95,
-      cashback: 20,
+      cashback: {
+        free: 5,
+        premium: 20
+      },
       category: "Marketing"
     },
     {
       name: "Canva Pro",
       description: "Professional design platform for teams",
+      detailedDescription: "Canva Pro offers premium design features including Brand Kit, background remover, unlimited storage, and access to millions of premium stock photos and elements. Perfect for creating professional marketing materials.",
       price: 12.99,
-      cashback: 15,
+      cashback: {
+        free: 5,
+        premium: 15
+      },
       category: "Design"
     },
     {
       name: "ClickUp",
       description: "Project management and productivity platform",
+      detailedDescription: "ClickUp combines project management, document collaboration, and task tracking in one platform. Features include custom views, time tracking, and workflow automation.",
       price: 7,
-      cashback: 20,
+      cashback: {
+        free: 5,
+        premium: 20
+      },
       category: "Productivity"
     },
     {
       name: "Ahrefs",
       description: "SEO tools and backlink analysis platform",
+      detailedDescription: "Ahrefs is a comprehensive SEO toolset for backlink analysis, keyword research, competitor research, and rank tracking. It helps optimize websites and improve search engine rankings.",
       price: 99,
-      cashback: 15,
+      cashback: {
+        free: 5,
+        premium: 15
+      },
       category: "Marketing"
     },
     {
       name: "Grammarly Business",
       description: "AI-powered writing assistant for teams",
+      detailedDescription: "Grammarly Business helps teams write consistently and professionally with advanced grammar checking, style suggestions, and tone adjustments. Includes team features and analytics.",
       price: 15,
-      cashback: 20,
+      cashback: {
+        free: 5,
+        premium: 20
+      },
       category: "Productivity"
     },
     {
       name: "Notion",
       description: "All-in-one workspace for notes and collaboration",
+      detailedDescription: "Notion combines notes, documents, wikis, and project management in one platform. Features include customizable templates, real-time collaboration, and powerful database capabilities.",
       price: 8,
-      cashback: 15,
+      cashback: {
+        free: 5,
+        premium: 15
+      },
       category: "Productivity"
     },
     {
       name: "Surfer SEO",
       description: "Content optimization and SERP analysis tool",
+      detailedDescription: "Surfer SEO provides data-driven content optimization suggestions based on top-ranking pages. Features include content editor, SERP analyzer, and keyword research tools.",
       price: 59,
-      cashback: 20,
+      cashback: {
+        free: 5,
+        premium: 20
+      },
       category: "Marketing"
     },
     {
       name: "Midjourney",
       description: "AI image generation platform",
+      detailedDescription: "Midjourney is an advanced AI art generator that creates high-quality images from text descriptions. Perfect for creating unique visuals for marketing, design, and creative projects.",
       price: 10,
-      cashback: 15,
+      cashback: {
+        free: 5,
+        premium: 15
+      },
+      category: "AI Tools"
+    },
+    {
+      name: "Claude AI",
+      description: "Advanced AI language model for business",
+      detailedDescription: "Claude AI is a sophisticated language model that excels at analysis, writing, and coding. It offers enhanced security features and specialized knowledge for business applications.",
+      price: 20,
+      cashback: {
+        free: 5,
+        premium: 20
+      },
+      category: "AI Tools"
+    },
+    {
+      name: "Stable Diffusion",
+      description: "Enterprise AI image generation platform",
+      detailedDescription: "Stable Diffusion is a powerful AI image generation tool for businesses. It offers high-resolution output, custom model training, and API access for integration into existing workflows.",
+      price: 25,
+      cashback: {
+        free: 5,
+        premium: 15
+      },
       category: "AI Tools"
     }
   ];
@@ -118,9 +181,32 @@ const Index = () => {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl">{tool.name}</CardTitle>
-                    <span className="px-3 py-1 text-sm font-semibold text-primary bg-primary/10 rounded-full">
-                      {tool.cashback}% Cashback
-                    </span>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <Info className="h-4 w-4" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80">
+                        <div className="space-y-2">
+                          <h4 className="font-semibold">{tool.name}</h4>
+                          <p className="text-sm text-gray-600">{tool.detailedDescription}</p>
+                          <div className="pt-2">
+                            <h5 className="font-semibold text-sm">Cashback Rates:</h5>
+                            <ul className="text-sm">
+                              <li className="flex items-center gap-2">
+                                <Check className="h-4 w-4 text-green-500" />
+                                Free Plan: {tool.cashback.free}% cashback
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <Star className="h-4 w-4 text-yellow-500" />
+                                Premium Plan: {tool.cashback.premium}% cashback
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                   <CardDescription className="text-sm text-gray-600">
                     {tool.category}
