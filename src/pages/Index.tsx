@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap, Star, Info } from "lucide-react";
+import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap, Star, Info, ArrowDown, ArrowUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useState } from "react";
 
 const Index = () => {
+  const [showAllTools, setShowAllTools] = useState(false);
+  
   const upcomingTools = [
     {
       name: "Monday.com",
@@ -140,6 +143,8 @@ const Index = () => {
     }
   ];
 
+  const displayedTools = showAllTools ? upcomingTools : upcomingTools.slice(0, 6);
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -176,31 +181,31 @@ const Index = () => {
             Preview the premium tools and services you'll have access to. Join now to be notified when these amazing offers become available.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {upcomingTools.map((tool, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
+            {displayedTools.map((tool, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow h-full">
+                <CardHeader className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-xl">{tool.name}</CardTitle>
+                    <CardTitle className="text-xl truncate">{tool.name}</CardTitle>
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="icon">
                           <Info className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-80">
+                      <PopoverContent className="w-80 p-4">
                         <div className="space-y-2">
                           <h4 className="font-semibold">{tool.name}</h4>
-                          <p className="text-sm text-gray-600">{tool.detailedDescription}</p>
+                          <p className="text-sm text-gray-600 break-words">{tool.detailedDescription}</p>
                           <div className="pt-2">
                             <h5 className="font-semibold text-sm">Cashback Rates:</h5>
-                            <ul className="text-sm">
+                            <ul className="text-sm space-y-1">
                               <li className="flex items-center gap-2">
-                                <Check className="h-4 w-4 text-green-500" />
-                                Free Plan: {tool.cashback.free}% cashback
+                                <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                                <span>Free Plan: {tool.cashback.free}% cashback</span>
                               </li>
                               <li className="flex items-center gap-2">
-                                <Star className="h-4 w-4 text-yellow-500" />
-                                Premium Plan: {tool.cashback.premium}% cashback
+                                <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
+                                <span>Premium Plan: {tool.cashback.premium}% cashback</span>
                               </li>
                             </ul>
                           </div>
@@ -213,7 +218,7 @@ const Index = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">{tool.description}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-2">{tool.description}</p>
                   <div className="flex items-center justify-between">
                     <span className="font-semibold">${tool.price}/mo</span>
                     <div className="flex items-center text-yellow-500">
@@ -228,6 +233,27 @@ const Index = () => {
               </Card>
             ))}
           </div>
+          
+          <div className="text-center mt-8">
+            {upcomingTools.length > 6 && (
+              <Button
+                onClick={() => setShowAllTools(!showAllTools)}
+                variant="outline"
+                className="gap-2"
+              >
+                {showAllTools ? (
+                  <>
+                    Show Less <ArrowUp className="h-4 w-4" />
+                  </>
+                ) : (
+                  <>
+                    Show More <ArrowDown className="h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
+
           <div className="text-center mt-12">
             <Link to="/signup">
               <Button size="lg" className="bg-primary hover:bg-primary-light">
