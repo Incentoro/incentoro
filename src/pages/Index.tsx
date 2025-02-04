@@ -1,9 +1,82 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap } from "lucide-react";
+import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap, Star } from "lucide-react";
 
 const Index = () => {
+  const upcomingTools = [
+    {
+      name: "Monday.com",
+      description: "Project management and team collaboration platform",
+      price: 8,
+      cashback: 20,
+      category: "Productivity"
+    },
+    {
+      name: "Jasper AI",
+      description: "AI-powered content creation and copywriting",
+      price: 24,
+      cashback: 15,
+      category: "AI Tools"
+    },
+    {
+      name: "Semrush",
+      description: "All-in-one SEO and content marketing suite",
+      price: 119.95,
+      cashback: 20,
+      category: "Marketing"
+    },
+    {
+      name: "Canva Pro",
+      description: "Professional design platform for teams",
+      price: 12.99,
+      cashback: 15,
+      category: "Design"
+    },
+    {
+      name: "ClickUp",
+      description: "Project management and productivity platform",
+      price: 7,
+      cashback: 20,
+      category: "Productivity"
+    },
+    {
+      name: "Ahrefs",
+      description: "SEO tools and backlink analysis platform",
+      price: 99,
+      cashback: 15,
+      category: "Marketing"
+    },
+    {
+      name: "Grammarly Business",
+      description: "AI-powered writing assistant for teams",
+      price: 15,
+      cashback: 20,
+      category: "Productivity"
+    },
+    {
+      name: "Notion",
+      description: "All-in-one workspace for notes and collaboration",
+      price: 8,
+      cashback: 15,
+      category: "Productivity"
+    },
+    {
+      name: "Surfer SEO",
+      description: "Content optimization and SERP analysis tool",
+      price: 59,
+      cashback: 20,
+      category: "Marketing"
+    },
+    {
+      name: "Midjourney",
+      description: "AI image generation platform",
+      price: 10,
+      cashback: 15,
+      category: "AI Tools"
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -11,10 +84,10 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 animate-fade-in">
-              Maximize Your Savings with Incentoro
+              Extraordinary Savings Has Never Been Easier with Incentoro
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto animate-fade-in">
-              Join thousands of smart shoppers who earn cashback on every purchase. Start saving today!
+              Thousands of smart shoppers can't be wrong. You can start today. Join the hottest new way to save.
             </p>
             <div className="flex justify-center gap-4">
               <Link to="/signup">
@@ -28,6 +101,53 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Upcoming Tools Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-4">Upcoming Tools in Our Marketplace</h2>
+          <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+            Preview the premium tools and services you'll have access to. Join now to be notified when these amazing offers become available.
+          </p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {upcomingTools.map((tool, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl">{tool.name}</CardTitle>
+                    <span className="px-3 py-1 text-sm font-semibold text-primary bg-primary/10 rounded-full">
+                      {tool.cashback}% Cashback
+                    </span>
+                  </div>
+                  <CardDescription className="text-sm text-gray-600">
+                    {tool.category}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">{tool.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold">${tool.price}/mo</span>
+                    <div className="flex items-center text-yellow-500">
+                      <Star className="w-4 h-4 fill-current" />
+                      <Star className="w-4 h-4 fill-current" />
+                      <Star className="w-4 h-4 fill-current" />
+                      <Star className="w-4 h-4 fill-current" />
+                      <Star className="w-4 h-4 fill-current" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link to="/signup">
+              <Button size="lg" className="bg-primary hover:bg-primary-light">
+                Get Early Access
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -263,15 +383,15 @@ const Index = () => {
       <section className="py-20 bg-primary">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-6">
-            Ready to Start Saving?
+            Ready to Transform How You Save?
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join Incentoro today and start earning cashback on every purchase.
+            Join thousands of smart shoppers who are already maximizing their savings with Incentoro's premium cashback platform.
           </p>
           <div className="flex justify-center gap-4">
             <Link to="/signup">
               <Button size="lg" className="bg-white text-primary hover:bg-gray-100">
-                Get Started Now
+                Start Your Savings Journey
               </Button>
             </Link>
             <Link to="/signin">
