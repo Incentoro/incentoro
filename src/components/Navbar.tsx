@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Globe } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
+import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
   const isDashboardPage = location.pathname.startsWith('/dashboard') || 
                          location.pathname === '/marketplace' || 
@@ -17,18 +21,33 @@ const Navbar = () => {
                          location.pathname === '/earnings';
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session && ['/signin', '/signup', '/'].includes(location.pathname)) {
-        navigate('/dashboard');
-      }
-    });
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error("Error getting session:", error.message);
+          return;
+        }
 
-    // Set up auth state listener
+        setSession(session);
+        
+        if (session && ['/signin', '/signup', '/'].includes(location.pathname)) {
+          navigate('/dashboard');
+        }
+      } catch (error: any) {
+        console.error("Error initializing auth:", error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event);
       setSession(session);
       
       if (event === 'SIGNED_IN') {
@@ -39,21 +58,38 @@ const Navbar = () => {
         navigate('/');
       } else if (event === 'TOKEN_REFRESHED') {
         console.log('Token has been refreshed');
+      } else if (event === 'USER_UPDATED') {
+        setSession(session);
       }
     });
 
-    // Cleanup subscription
     return () => {
       subscription.unsubscribe();
     };
   }, [location.pathname, navigate]);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Error signing out",
+          description: error.message,
+        });
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error signing out",
+        description: error.message,
+      });
     }
   };
+
+  if (isLoading) {
+    return null; // Or a loading spinner
+  }
 
   if (isDashboardPage) {
     return (
@@ -64,6 +100,15 @@ const Navbar = () => {
               <Globe className="h-8 w-8 text-primary" />
               <span className="text-2xl font-bold text-primary">Incentoro</span>
             </Link>
+            {session && (
+              <Button 
+                variant="ghost" 
+                onClick={handleSignOut}
+                className="text-gray-600 hover:text-primary transition-colors"
+              >
+                Sign Out
+              </Button>
+            )}
           </div>
         </div>
       </nav>
@@ -85,13 +130,23 @@ const Navbar = () => {
                   Home
                 </Link>
                 <button 
-                  onClick={() => scrollToSection('how-it-works')} 
+                  onClick={() => {
+                    const element = document.getElementById('how-it-works');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }} 
                   className="text-gray-600 hover:text-primary transition-colors"
                 >
                   How It Works
                 </button>
                 <button 
-                  onClick={() => scrollToSection('pricing')} 
+                  onClick={() => {
+                    const element = document.getElementById('pricing');
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }} 
                   className="text-gray-600 hover:text-primary transition-colors"
                 >
                   Pricing
@@ -114,7 +169,15 @@ const Navbar = () => {
                   </Button>
                 </Link>
               </>
-            ) : null}
+            ) : (
+              <Button 
+                variant="ghost" 
+                onClick={handleSignOut}
+                className="text-gray-600 hover:text-primary transition-colors"
+              >
+                Sign Out
+              </Button>
+            )}
           </div>
         </div>
       </div>
