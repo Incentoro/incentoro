@@ -143,7 +143,7 @@ const Index = () => {
     }
   ];
 
-  const displayedTools = showAllTools ? upcomingTools : upcomingTools.slice(0, 6);
+  const displayedTools = showAllTools ? upcomingTools : upcomingTools.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-white">
@@ -182,7 +182,7 @@ const Index = () => {
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {displayedTools.map((tool, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow h-full">
+              <Card key={index} className="hover:shadow-lg transition-shadow h-full relative">
                 <CardHeader className="space-y-2">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-xl truncate">{tool.name}</CardTitle>
@@ -192,7 +192,7 @@ const Index = () => {
                           <Info className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-80 p-4">
+                      <PopoverContent className="w-80 p-4 bg-white shadow-xl border z-50">
                         <div className="space-y-2">
                           <h4 className="font-semibold">{tool.name}</h4>
                           <p className="text-sm text-gray-600 break-words">{tool.detailedDescription}</p>
@@ -235,7 +235,7 @@ const Index = () => {
           </div>
           
           <div className="text-center mt-8">
-            {upcomingTools.length > 6 && (
+            {upcomingTools.length > 3 && (
               <Button
                 onClick={() => setShowAllTools(!showAllTools)}
                 variant="outline"
