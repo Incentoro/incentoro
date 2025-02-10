@@ -63,7 +63,7 @@
 }
 
 .glass-card {
-  @apply backdrop-blur-xl bg-white/90 border border-white/20 shadow-lg text-foreground;
+  @apply backdrop-blur-xl bg-white/90 border border-white/20 shadow-lg text-black;
 }
 
 .premium-shadow {
@@ -72,6 +72,29 @@
 
 .gradient-border {
   @apply relative before:absolute before:inset-0 before:-z-10 before:p-[1px] before:bg-gradient-to-r before:from-primary before:to-primary-light before:rounded-lg;
+}
+
+/* Card text styles */
+.card-title {
+  @apply text-black font-semibold;
+}
+
+.card-description {
+  @apply text-black/80;
+}
+
+/* Button text styles */
+.button-text {
+  @apply text-white font-medium;
+}
+
+/* Form text styles */
+.form-label {
+  @apply text-black font-medium;
+}
+
+.form-description {
+  @apply text-black/80 text-sm;
 }
 
 /* Mobile optimizations */

@@ -32,7 +32,7 @@ export default {
         },
         secondary: {
           DEFAULT: "#6B7280",
-          foreground: "#FFFFFF",
+          foreground: "#000000",
         },
         destructive: {
           DEFAULT: "#EF4444",
@@ -44,23 +44,23 @@ export default {
         },
         warning: {
           DEFAULT: "#FACC15",
-          foreground: "#1F2937",
+          foreground: "#000000",
         },
         muted: {
           DEFAULT: "#9CA3AF",
-          foreground: "#1F2937",
+          foreground: "#000000",
         },
         accent: {
           DEFAULT: "#E1E1E1",
-          foreground: "#1F2937",
+          foreground: "#000000",
         },
         card: {
           DEFAULT: "#FFFFFF",
-          foreground: "#1F2937",
+          foreground: "#000000",
         },
-        "text-primary": "#1F2937",
-        "text-secondary": "#6B7280",
-        "text-muted": "#9CA3AF",
+        "text-primary": "#000000",
+        "text-secondary": "#000000",
+        "text-muted": "#000000",
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #00C6FB 0%, #005BEA 100%)',
