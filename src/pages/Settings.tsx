@@ -32,17 +32,20 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session) {
-        toast({
-          variant: "destructive",
-          title: "Authentication Error",
-          description: "Please sign in to access settings",
-        });
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) {
+          navigate("/signin");
+          return;
+        }
+        setIsInitializing(false);
+      } catch (error) {
+        console.error("Auth check error:", error);
         navigate("/signin");
       }
     };
@@ -56,7 +59,7 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, toast]);
+  }, [navigate]);
 
   const { data: profile, isError } = useQuery({
     queryKey: ['profile'],
@@ -73,14 +76,18 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
       if (error) throw error;
       return data;
     },
+    enabled: !isInitializing,
     retry: false,
     meta: {
-      onError: () => {
+      onError: (error: Error) => {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to load profile",
+          description: error.message || "Failed to load profile",
         });
+        if (error.message.includes('Not authenticated')) {
+          navigate("/signin");
+        }
       }
     }
   });
@@ -152,6 +159,18 @@ const Settings = ({ darkMode, setDarkMode }: SettingsProps) => {
       setIsDeletingAccount(false);
     }
   };
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-white pt-20 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto">
+          <Card className="p-6 text-center text-gray-500">
+            Loading...
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   if (isError) {
     return (
