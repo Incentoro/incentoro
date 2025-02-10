@@ -23,8 +23,8 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#FFFFFF",
+        foreground: "#1F2937",
         primary: {
           DEFAULT: "#006DAF",
           light: "#358DCE",
@@ -64,9 +64,9 @@ export default {
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #00C6FB 0%, #005BEA 100%)',
-        'gradient-secondary': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%)',
-        'gradient-background': 'linear-gradient(to bottom right, #1A1F2C, #0F172A)',
-        'gradient-card': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+        'gradient-secondary': 'linear-gradient(135deg, #358DCE 0%, #006DAF 100%)',
+        'gradient-background': 'linear-gradient(to bottom right, #FFFFFF, #F3F4F6)',
+        'gradient-card': 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
       },
       borderRadius: {
         lg: "var(--radius)",
