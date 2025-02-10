@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,10 +62,8 @@ export default {
         "text-muted": "#9CA3AF",
       },
       backgroundImage: {
-        'gradient-primary': 'linear-gradient(135deg, #00C6FB 0%, #005BEA 100%)',
-        'gradient-secondary': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%)',
-        'gradient-background': 'linear-gradient(to bottom right, #1A1F2C, #0F172A)',
-        'gradient-card': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+        'gradient-primary': 'linear-gradient(to right, #006DAF, #358DCE)',
+        'gradient-background': 'linear-gradient(to bottom right, #E1E1E1, white)',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -82,15 +79,10 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-20px)" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        float: "float 6s ease-in-out infinite",
       },
     },
   },
