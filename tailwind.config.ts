@@ -23,8 +23,8 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#FFFFFF",
-        foreground: "#1F2937",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "#006DAF",
           light: "#358DCE",
@@ -32,7 +32,7 @@ export default {
         },
         secondary: {
           DEFAULT: "#6B7280",
-          foreground: "#000000",
+          foreground: "#FFFFFF",
         },
         destructive: {
           DEFAULT: "#EF4444",
@@ -44,29 +44,29 @@ export default {
         },
         warning: {
           DEFAULT: "#FACC15",
-          foreground: "#000000",
+          foreground: "#1F2937",
         },
         muted: {
           DEFAULT: "#9CA3AF",
-          foreground: "#000000",
+          foreground: "#1F2937",
         },
         accent: {
           DEFAULT: "#E1E1E1",
-          foreground: "#000000",
+          foreground: "#1F2937",
         },
         card: {
           DEFAULT: "#FFFFFF",
-          foreground: "#000000",
+          foreground: "#1F2937",
         },
-        "text-primary": "#000000",
-        "text-secondary": "#000000",
-        "text-muted": "#000000",
+        "text-primary": "#1F2937",
+        "text-secondary": "#6B7280",
+        "text-muted": "#9CA3AF",
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #00C6FB 0%, #005BEA 100%)',
-        'gradient-secondary': 'linear-gradient(135deg, #358DCE 0%, #006DAF 100%)',
-        'gradient-background': 'linear-gradient(to bottom right, #FFFFFF, #F3F4F6)',
-        'gradient-card': 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
+        'gradient-secondary': 'linear-gradient(135deg, #8B5CF6 0%, #D946EF 100%)',
+        'gradient-background': 'linear-gradient(to bottom right, #1A1F2C, #0F172A)',
+        'gradient-card': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
       },
       borderRadius: {
         lg: "var(--radius)",
