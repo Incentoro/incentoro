@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ export const SignInForm = () => {
 
     try {
       // Attempt to sign in directly without checking profiles first
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError, data: signInData } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -57,28 +58,45 @@ export const SignInForm = () => {
         }
       } else {
         // After successful sign in, check if profile exists
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('id')
-          .eq('email', email)
-          .maybeSingle();
+        const { data: user } = await supabase.auth.getUser();
+        
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', user.user.id)
+            .maybeSingle();
 
-        // If profile doesn't exist, create it
-        if (!profile) {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) {
+          // If profile doesn't exist, create it with a generated username
+          if (!profile && user.user) {
+            const generatedUsername = email.split('@')[0]; // Generate username from email
             const { error: profileError } = await supabase
               .from('profiles')
-              .insert([
-                { 
-                  id: user.id,
-                  email: email,
-                  full_name: user.user_metadata.full_name || null
-                }
-              ]);
+              .insert({
+                id: user.user.id,
+                email: email,
+                username: generatedUsername,
+                full_name: user.user.user_metadata.full_name || null
+              });
 
             if (profileError) {
               console.error("Error creating profile:", profileError);
+              // Handle username conflict if it occurs
+              if (profileError.message.includes('duplicate key value violates unique constraint')) {
+                const randomSuffix = Math.floor(Math.random() * 1000);
+                const { error: retryError } = await supabase
+                  .from('profiles')
+                  .insert({
+                    id: user.user.id,
+                    email: email,
+                    username: `${generatedUsername}${randomSuffix}`,
+                    full_name: user.user.user_metadata.full_name || null
+                  });
+                
+                if (retryError) {
+                  console.error("Error creating profile with random suffix:", retryError);
+                }
+              }
             }
           }
         }
