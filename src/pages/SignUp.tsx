@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { useToast } from "@/components/ui/use-toast";
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,7 @@ const SignUp = () => {
         options: {
           data: {
             full_name: fullName,
+            username: username,
           },
         },
       });
@@ -67,6 +70,16 @@ const SignUp = () => {
                 type="text"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                id="username"
+                placeholder="Username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
