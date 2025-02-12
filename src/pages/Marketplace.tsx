@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Marketplace = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const { data: tools, isLoading } = useQuery({
     queryKey: ['marketplace-tools'],
@@ -23,28 +25,49 @@ const Marketplace = () => {
   });
 
   const handleBuyNow = async (toolId: string) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate('/signin');
-      return;
-    }
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/signin');
+        return;
+      }
 
-    // Record click tracking
-    await supabase.from('click_tracking').insert({
-      user_id: user.id,
-      affiliate_link_id: toolId,
-    });
+      // First get the affiliate link
+      const { data: affiliateLink, error: linkError } = await supabase
+        .from('affiliate_links')
+        .select('id, unique_code')
+        .eq('product_id', toolId)
+        .eq('user_id', user.id)
+        .maybeSingle();
 
-    // Get the affiliate link
-    const { data: affiliateLink } = await supabase
-      .from('affiliate_links')
-      .select('unique_code')
-      .eq('product_id', toolId)
-      .eq('user_id', user.id)
-      .single();
+      if (linkError) throw linkError;
 
-    if (affiliateLink?.unique_code) {
+      if (!affiliateLink) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not find your affiliate link. Please try again later.",
+        });
+        return;
+      }
+
+      // Record click tracking
+      const { error: trackingError } = await supabase.from('click_tracking').insert({
+        user_id: user.id,
+        affiliate_link_id: affiliateLink.id,
+      });
+
+      if (trackingError) throw trackingError;
+
+      // Open the affiliate link
       window.open(`https://get.murf.ai/${affiliateLink.unique_code}`, '_blank');
+    } catch (error: any) {
+      console.error('Error in handleBuyNow:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+      });
     }
   };
 
