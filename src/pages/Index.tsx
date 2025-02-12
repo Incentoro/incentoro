@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Check, ShoppingCart, CreditCard, TrendingUp, Shield, Gift, Zap, Star, Info, ArrowDown, ArrowUp } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useState } from "react";
+import CashbackCalculator from "@/components/CashbackCalculator";
 
 const Index = () => {
   const [showAllTools, setShowAllTools] = useState(false);
@@ -170,6 +171,13 @@ const Index = () => {
               </Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Calculator Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <CashbackCalculator />
         </div>
       </section>
 
