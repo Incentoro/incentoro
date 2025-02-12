@@ -1,0 +1,5 @@
+
+[functions.process-cashback]
+verify_jwt = false
+[trigger.cron]
+schedule = "0 0 * * *"  # Run daily at midnight
