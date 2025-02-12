@@ -59,8 +59,24 @@ const Marketplace = () => {
 
       if (trackingError) throw trackingError;
 
-      // Open the affiliate link
-      window.open(`https://get.murf.ai/${affiliateLink.unique_code}`, '_blank');
+      // Get the tool details
+      const { data: tool } = await supabase
+        .from('marketplace_tools')
+        .select('base_url')
+        .eq('id', toolId)
+        .maybeSingle();
+
+      if (!tool?.base_url) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Invalid tool configuration. Please try again later.",
+        });
+        return;
+      }
+
+      // Open the affiliate link using the tool's base URL
+      window.open(`${tool.base_url}/${affiliateLink.unique_code}`, '_blank');
     } catch (error: any) {
       console.error('Error in handleBuyNow:', error);
       toast({
