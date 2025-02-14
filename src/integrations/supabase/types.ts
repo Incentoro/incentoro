@@ -95,6 +95,7 @@ export type Database = {
       }
       marketplace_tools: {
         Row: {
+          base_url: string
           cashback_percentage: number
           category: string
           created_at: string
@@ -106,6 +107,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          base_url?: string
           cashback_percentage: number
           category: string
           created_at?: string
@@ -117,6 +119,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          base_url?: string
           cashback_percentage?: number
           category?: string
           created_at?: string

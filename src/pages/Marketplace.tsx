@@ -60,13 +60,13 @@ const Marketplace = () => {
       if (trackingError) throw trackingError;
 
       // Get the tool details
-      const { data: tool } = await supabase
+      const { data: tool, error: toolError } = await supabase
         .from('marketplace_tools')
         .select('base_url')
         .eq('id', toolId)
-        .maybeSingle();
+        .single();
 
-      if (!tool?.base_url) {
+      if (toolError || !tool?.base_url) {
         toast({
           variant: "destructive",
           title: "Error",
