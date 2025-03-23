@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo } from "react";
+
+import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, TrendingUp, Link, History } from "lucide-react";
+import { Moon, Sun, TrendingUp, Link, History, Menu } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -14,7 +15,7 @@ import {
   Tooltip,
   ResponsiveContainer
 } from "recharts";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useScreenSize } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
@@ -51,8 +52,10 @@ interface CashbackDataPoint {
 
 const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
   const isMobile = useIsMobile();
+  const screenSize = useScreenSize();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   // Check authentication status
   useEffect(() => {
@@ -249,14 +252,40 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
     }
   };
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Hide sidebar when switching to mobile view
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    } else {
+      setSidebarOpen(true);
+    }
+  }, [isMobile]);
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
-      <DashboardSidebar />
-      <div className="flex-1 p-4 md:p-8 mt-0">
-        <div className="flex justify-between items-center mb-6 sticky top-16 bg-white dark:bg-gray-900 z-10 py-4">
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-            Dashboard Overview
-          </h1>
+      {sidebarOpen && <DashboardSidebar />}
+      
+      <div className={`flex-1 p-4 md:p-8 ${!sidebarOpen ? 'w-full' : ''}`}>
+        <div className="flex justify-between items-center mb-6 sticky top-0 bg-white dark:bg-gray-900 z-10 py-4">
+          <div className="flex items-center gap-2">
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleSidebar}
+                className="mr-2"
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+            )}
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
+              Dashboard Overview
+            </h1>
+          </div>
           <Button
             variant="outline"
             size="icon"
@@ -267,33 +296,33 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="h-5 w-5 text-success" />
-              <h2 className="text-lg md:text-xl font-semibold">Total Confirmed Cashback</h2>
+              <h2 className="text-base md:text-lg font-semibold">Total Confirmed Cashback</h2>
             </div>
-            <p className="text-2xl md:text-4xl font-bold text-primary dark:text-primary-light">
+            <p className="text-xl md:text-3xl font-bold text-primary dark:text-primary-light">
               ${totalConfirmed.toFixed(2)}
             </p>
           </Card>
 
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <History className="h-5 w-5 text-yellow-500" />
-              <h2 className="text-lg md:text-xl font-semibold">Pending Cashback</h2>
+              <h2 className="text-base md:text-lg font-semibold">Pending Cashback</h2>
             </div>
-            <p className="text-2xl md:text-4xl font-bold text-yellow-500">
+            <p className="text-xl md:text-3xl font-bold text-yellow-500">
               ${totalPending.toFixed(2)}
             </p>
           </Card>
 
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-2 mb-3">
               <Link className="h-5 w-5 text-blue-500" />
-              <h2 className="text-lg md:text-xl font-semibold">Active Affiliate Links</h2>
+              <h2 className="text-base md:text-lg font-semibold">Active Affiliate Links</h2>
             </div>
-            <p className="text-2xl md:text-4xl font-bold text-blue-500">
+            <p className="text-xl md:text-3xl font-bold text-blue-500">
               {affiliateLinks?.length || 0}
             </p>
           </Card>
@@ -302,15 +331,15 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         <Card className="p-4 md:p-6 mb-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
           <div className="flex items-center gap-2 mb-4">
             <Link className="h-5 w-5" />
-            <h2 className="text-lg md:text-xl font-semibold">Your Affiliate Links</h2>
+            <h2 className="text-base md:text-lg font-semibold">Your Affiliate Links</h2>
           </div>
-          <div className="space-y-4">
+          <div className={`space-y-3 ${isMobile ? 'max-h-[250px] overflow-y-auto' : ''}`}>
             {affiliateLinks?.map((link) => (
-              <div key={link.id} className="p-4 border rounded-lg dark:border-gray-700">
-                <div className="flex justify-between items-start mb-2">
+              <div key={link.id} className="p-3 border rounded-lg dark:border-gray-700">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                   <div>
-                    <h3 className="font-semibold">{link.product.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h3 className="font-semibold text-sm">{link.product.name}</h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
                       {link.clicks} clicks • {link.product.cashback_percentage}% cashback
                     </p>
                   </div>
@@ -318,6 +347,7 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
                     variant="outline"
                     size="sm"
                     onClick={() => copyAffiliateLink(link.unique_code)}
+                    className="mt-2 sm:mt-0 self-start sm:self-auto"
                   >
                     Copy Link
                   </Button>
@@ -330,52 +360,58 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
           <div className="flex items-center gap-2 mb-4">
             <History className="h-5 w-5" />
-            <h2 className="text-lg md:text-xl font-semibold">Cashback History</h2>
+            <h2 className="text-base md:text-lg font-semibold">Cashback History</h2>
           </div>
-          <div className="h-[250px] md:h-[300px]">
+          <div className="h-[200px] md:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={cashbackData}>
+              <LineChart data={cashbackData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" className="dark:opacity-20" />
                 <XAxis 
                   dataKey="month" 
                   stroke={darkMode ? "#fff" : "#000"}
-                  tick={{ fontSize: isMobile ? 12 : 14 }}
+                  tick={{ fontSize: screenSize.isMobile ? 10 : 12 }}
                 />
                 <YAxis 
                   stroke={darkMode ? "#fff" : "#000"}
-                  tick={{ fontSize: isMobile ? 12 : 14 }}
+                  tick={{ fontSize: screenSize.isMobile ? 10 : 12 }}
+                  width={screenSize.isMobile ? 30 : 40}
                 />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: darkMode ? '#1f2937' : 'white',
                     border: '1px solid #374151',
                     color: darkMode ? '#fff' : '#000'
-                  }} 
+                  }}
+                  labelStyle={{
+                    fontWeight: 'bold',
+                    marginBottom: '5px'
+                  }}
                 />
                 <Line 
                   type="monotone" 
                   dataKey="amount" 
                   stroke="#006DAF" 
                   strokeWidth={2}
+                  activeDot={{ r: 6 }}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-4 space-y-2">
+          <div className="mt-4 max-h-[250px] overflow-y-auto">
             {cashbackHistory?.map((item) => (
-              <div key={item.id} className="flex justify-between items-center p-2 border-b dark:border-gray-700">
-                <div>
-                  <p className="font-medium">{item.description}</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+              <div key={item.id} className="flex flex-col sm:flex-row sm:justify-between p-2 border-b dark:border-gray-700">
+                <div className="mb-1 sm:mb-0">
+                  <p className="font-medium text-sm">{item.description}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {new Date(item.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold">${Number(item.amount).toFixed(2)}</p>
-                  <p className={`text-sm ${
+                <div className="text-left sm:text-right">
+                  <p className="font-semibold text-sm">${Number(item.amount).toFixed(2)}</p>
+                  <p className={`text-xs ${
                     item.status === 'completed' ? 'text-green-500' : 'text-yellow-500'
                   }`}>
-                    {item.status}
+                    {item.status === 'completed' ? 'Completed' : 'Pending'}
                   </p>
                 </div>
               </div>
