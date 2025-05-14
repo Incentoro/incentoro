@@ -1,9 +1,8 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun, TrendingUp, Link, History, Menu } from "lucide-react";
+import { Moon, Sun, TrendingUp, Link, History, Menu, CheckCircle, Clock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -148,7 +147,7 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
       const [transactionsResponse, purchasesResponse] = await Promise.all([
         supabase
           .from('transactions')
-          .select('*')
+          .select('*, marketplace_tools:source_transaction_id(name)')
           .eq('user_id', session.user.id)
           .eq('type', 'cashback')
           .order('created_at', { ascending: false }),
@@ -179,9 +178,16 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         created_at: purchase.created_at,
         status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
         description: `Cashback from ${purchase.marketplace_tools.name}`,
+        tool_name: purchase.marketplace_tools.name,
       }));
 
-      return [...transactionsResponse.data, ...partnerStackTransactions].sort(
+      // Add tool name to transactions where available
+      const formattedTransactions = transactionsResponse.data.map(transaction => ({
+        ...transaction,
+        tool_name: transaction.marketplace_tools?.name || 'Unknown Tool'
+      }));
+
+      return [...formattedTransactions, ...partnerStackTransactions].sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
     },
@@ -197,21 +203,31 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
     }
   });
 
-  // Calculate total confirmed and pending cashback
-  const { totalConfirmed, totalPending } = useMemo(() => {
-    if (!cashbackHistory) return { totalConfirmed: 0, totalPending: 0 };
+  // Calculate cashback categories: total, pending, and withdrawable (approved)
+  const cashbackStats = useMemo(() => {
+    if (!cashbackHistory) return { 
+      totalCashback: 0,
+      pendingCashback: 0, 
+      withdrawableCashback: 0
+    };
 
     return cashbackHistory.reduce(
       (acc, transaction) => {
         const amount = Number(transaction.amount);
+        
+        // Add to total cashback
+        acc.totalCashback += amount;
+        
+        // Categorize based on status
         if (transaction.status === 'completed') {
-          acc.totalConfirmed += amount;
+          acc.withdrawableCashback += amount;
         } else if (transaction.status === 'pending') {
-          acc.totalPending += amount;
+          acc.pendingCashback += amount;
         }
+        
         return acc;
       },
-      { totalConfirmed: 0, totalPending: 0 }
+      { totalCashback: 0, pendingCashback: 0, withdrawableCashback: 0 }
     );
   }, [cashbackHistory]);
 
@@ -296,35 +312,45 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="h-5 w-5 text-success" />
-              <h2 className="text-base md:text-lg font-semibold">Total Confirmed Cashback</h2>
+              <h2 className="text-base md:text-lg font-semibold">Total Cashback Earned</h2>
             </div>
             <p className="text-xl md:text-3xl font-bold text-primary dark:text-primary-light">
-              ${totalConfirmed.toFixed(2)}
+              ${cashbackStats.totalCashback.toFixed(2)}
             </p>
           </Card>
 
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-3">
-              <History className="h-5 w-5 text-yellow-500" />
+              <Clock className="h-5 w-5 text-yellow-500" />
               <h2 className="text-base md:text-lg font-semibold">Pending Cashback</h2>
             </div>
             <p className="text-xl md:text-3xl font-bold text-yellow-500">
-              ${totalPending.toFixed(2)}
+              ${cashbackStats.pendingCashback.toFixed(2)}
             </p>
           </Card>
 
           <Card className="p-4 md:p-6 bg-white dark:bg-gray-800 text-gray-900 dark:text-white">
             <div className="flex items-center gap-2 mb-3">
-              <Link className="h-5 w-5 text-blue-500" />
-              <h2 className="text-base md:text-lg font-semibold">Active Affiliate Links</h2>
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              <h2 className="text-base md:text-lg font-semibold">Withdrawable Cashback</h2>
             </div>
-            <p className="text-xl md:text-3xl font-bold text-blue-500">
-              {affiliateLinks?.length || 0}
+            <p className="text-xl md:text-3xl font-bold text-green-500">
+              ${cashbackStats.withdrawableCashback.toFixed(2)}
             </p>
+            {cashbackStats.withdrawableCashback > 0 && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="mt-2"
+                onClick={() => navigate('/withdrawal')}
+              >
+                Withdraw
+              </Button>
+            )}
           </Card>
         </div>
 
