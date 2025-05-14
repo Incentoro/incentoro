@@ -1,17 +1,21 @@
 
-import { Search, ArrowLeft } from "lucide-react";
+import { Search, ArrowLeft, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 const Marketplace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchQuery, setSearchQuery] = useState("");
 
+  // Fetch all marketplace tools
   const { data: tools, isLoading } = useQuery({
     queryKey: ['marketplace-tools'],
     queryFn: async () => {
@@ -24,7 +28,14 @@ const Marketplace = () => {
     }
   });
 
-  const handleBuyNow = async (toolId: string) => {
+  // Filter tools based on search query
+  const filteredTools = tools?.filter(tool => 
+    tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    tool.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    tool.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleBuyNow = async (tool: any) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -32,51 +43,27 @@ const Marketplace = () => {
         return;
       }
 
-      // First get the affiliate link
-      const { data: affiliateLink, error: linkError } = await supabase
-        .from('affiliate_links')
-        .select('id, unique_code')
-        .eq('product_id', toolId)
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (linkError) throw linkError;
-
-      if (!affiliateLink) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not find your affiliate link. Please try again later.",
+      // Record click in the new click_logs table
+      const { error: clickLogError } = await supabase
+        .from('click_logs')
+        .insert({
+          user_id: user.id,
+          tool_name: tool.name,
+          tool_id: tool.id,
+          affiliate_link: tool.base_url
         });
-        return;
+
+      if (clickLogError) {
+        console.error('Error logging click:', clickLogError);
       }
 
-      // Record click tracking
-      const { error: trackingError } = await supabase.from('click_tracking').insert({
-        user_id: user.id,
-        affiliate_link_id: affiliateLink.id,
+      // Open the affiliate link in a new tab
+      window.open(tool.base_url, '_blank');
+      
+      toast({
+        title: "Cashback tracking activated",
+        description: `You'll earn ${tool.cashback_percentage}% cashback on your purchase.`,
       });
-
-      if (trackingError) throw trackingError;
-
-      // Get the tool details
-      const { data: tool, error: toolError } = await supabase
-        .from('marketplace_tools')
-        .select('base_url')
-        .eq('id', toolId)
-        .single();
-
-      if (toolError || !tool?.base_url) {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Invalid tool configuration. Please try again later.",
-        });
-        return;
-      }
-
-      // Open the affiliate link using the tool's base URL
-      window.open(`${tool.base_url}/${affiliateLink.unique_code}`, '_blank');
     } catch (error: any) {
       console.error('Error in handleBuyNow:', error);
       toast({
@@ -107,6 +94,8 @@ const Marketplace = () => {
             type="search" 
             placeholder="Search tools..." 
             className="pl-10"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
           <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
         </div>
@@ -121,43 +110,51 @@ const Marketplace = () => {
               </Card>
             ))}
           </div>
-        ) : tools && tools.length > 0 ? (
+        ) : filteredTools && filteredTools.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => (
-              <Card key={tool.id} className="p-6">
-                {tool.image_url && (
-                  <div className="mb-4 h-40 flex items-center justify-center bg-gray-50 rounded-lg">
+            {filteredTools.map((tool) => (
+              <Card key={tool.id} className="overflow-hidden border-gray-200 hover:shadow-md transition-shadow">
+                <div className="p-6">
+                  <div className="mb-4 h-24 flex items-center justify-center bg-gray-50 rounded-lg">
                     <img 
-                      src={tool.image_url} 
+                      src={tool.image_url || '/placeholder.svg'} 
                       alt={tool.name} 
-                      className="h-20 object-contain"
+                      className="h-16 object-contain"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/placeholder.svg';
+                      }}
                     />
                   </div>
-                )}
-                <h3 className="text-xl font-semibold mb-2">{tool.name}</h3>
-                <p className="text-gray-600 mb-4 line-clamp-3">{tool.description}</p>
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Cashback</p>
-                    <p className="font-semibold">{tool.cashback_percentage}%</p>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xl font-semibold">{tool.name}</h3>
+                    <Badge>{tool.category}</Badge>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">Price</p>
-                    <p className="font-semibold">${tool.price}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3 h-18">{tool.description}</p>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Cashback</p>
+                      <p className="font-semibold text-green-600">{tool.cashback_percentage}%</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">Price</p>
+                      <p className="font-semibold">${tool.price}</p>
+                    </div>
                   </div>
+                  <Button 
+                    className="w-full flex items-center gap-2"
+                    onClick={() => handleBuyNow(tool)}
+                  >
+                    <span>Buy & Earn Cashback</span>
+                    <ExternalLink className="h-4 w-4" />
+                  </Button>
                 </div>
-                <Button 
-                  className="w-full"
-                  onClick={() => handleBuyNow(tool.id)}
-                >
-                  Buy Now & Get Cashback
-                </Button>
               </Card>
             ))}
           </div>
         ) : (
           <Card className="p-6 text-center text-gray-500">
-            No tools available in the marketplace yet. Check back soon!
+            No tools match your search. Try adjusting your search terms.
           </Card>
         )}
       </div>
