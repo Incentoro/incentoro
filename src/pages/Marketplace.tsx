@@ -1,4 +1,3 @@
-
 import { Search, ArrowLeft, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -43,7 +42,7 @@ const Marketplace = () => {
         return;
       }
 
-      // Record click in the new click_logs table
+      // Record click in the click_logs table
       const { error: clickLogError } = await supabase
         .from('click_logs')
         .insert({
@@ -57,12 +56,52 @@ const Marketplace = () => {
         console.error('Error logging click:', clickLogError);
       }
 
+      // Get user's email from profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Error fetching user profile:', profileError);
+      }
+
+      const userEmail = profileData?.email || user.email;
+
+      // Send email notification using the edge function
+      if (userEmail) {
+        try {
+          const response = await fetch(
+            "https://usegbnurqtbbvbmsvohs.supabase.co/functions/v1/send-cashback-notification",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${supabase.auth.getSession().then(res => res.data.session?.access_token)}`,
+              },
+              body: JSON.stringify({
+                email: userEmail,
+                toolName: tool.name
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Email notification error:", errorData);
+          }
+        } catch (emailError) {
+          console.error("Failed to send email notification:", emailError);
+        }
+      }
+
       // Open the affiliate link in a new tab
       window.open(tool.base_url, '_blank');
       
       toast({
         title: "Cashback tracking activated",
-        description: `You'll earn ${tool.cashback_percentage}% cashback on your purchase.`,
+        description: `You'll earn ${tool.cashback_percentage}% cashback on your purchase. We've sent you a confirmation email.`,
       });
     } catch (error: any) {
       console.error('Error in handleBuyNow:', error);
