@@ -135,9 +135,11 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          free_cashback_percentage: number | null
           id: string
           image_url: string | null
           name: string
+          premium_cashback_percentage: number | null
           price: number
           updated_at: string
         }
@@ -147,9 +149,11 @@ export type Database = {
           category: string
           created_at?: string
           description?: string | null
+          free_cashback_percentage?: number | null
           id?: string
           image_url?: string | null
           name: string
+          premium_cashback_percentage?: number | null
           price: number
           updated_at?: string
         }
@@ -159,9 +163,11 @@ export type Database = {
           category?: string
           created_at?: string
           description?: string | null
+          free_cashback_percentage?: number | null
           id?: string
           image_url?: string | null
           name?: string
+          premium_cashback_percentage?: number | null
           price?: number
           updated_at?: string
         }
@@ -273,6 +279,42 @@ export type Database = {
           },
         ]
       }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -281,6 +323,8 @@ export type Database = {
           plan_type: string
           started_at: string
           status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           updated_at: string
           user_id: string
         }
@@ -291,6 +335,8 @@ export type Database = {
           plan_type: string
           started_at?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -301,6 +347,8 @@ export type Database = {
           plan_type?: string
           started_at?: string
           status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -317,6 +365,7 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          cookie_period_days: number | null
           cookie_period_end: string | null
           created_at: string
           description: string | null
@@ -329,6 +378,7 @@ export type Database = {
         }
         Insert: {
           amount: number
+          cookie_period_days?: number | null
           cookie_period_end?: string | null
           created_at?: string
           description?: string | null
@@ -341,6 +391,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          cookie_period_days?: number | null
           cookie_period_end?: string | null
           created_at?: string
           description?: string | null
@@ -376,6 +427,10 @@ export type Database = {
       generate_unique_affiliate_code: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      process_confirmed_cashbacks: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
       process_recurring_cashback: {
         Args: Record<PropertyKey, never>
