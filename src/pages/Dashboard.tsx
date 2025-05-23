@@ -200,12 +200,14 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         };
       });
 
-      // Add tool name to transactions where available
+      // Add tool name to transactions where available with proper null checks
       const formattedTransactions = transactionsResponse.data.map(transaction => {
-        // Safely access the name property
+        // Safely access the name property with null check and type guard
         let toolName = 'Unknown Tool';
         if (transaction.marketplace_tools && 
-            typeof transaction.marketplace_tools === 'object' && 
+            transaction.marketplace_tools !== null &&
+            typeof transaction.marketplace_tools === 'object' &&
+            transaction.marketplace_tools !== null &&
             'name' in transaction.marketplace_tools) {
           toolName = transaction.marketplace_tools.name as string;
         }
