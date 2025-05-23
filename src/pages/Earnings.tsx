@@ -1,4 +1,3 @@
-
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,24 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { useState } from "react";
+
+// Custom cookie period configuration for specific tools - keep in sync with Marketplace
+const CUSTOM_COOKIE_PERIODS: Record<string, number> = {
+  "Koala AI": 60,
+  "Scalenut": 60,
+  "Pouncer AI": 90,
+  "ArtSpace.ai": 45,
+  "Moosend": 90,
+  "Frase": 60,
+  "Text Cortex": 60,
+  "ADCreative.ai": 30,
+  "Mangools": 30,
+  "Lemlist": 30,
+  "MurfAI": 90
+};
+
+// Default cookie period (days) if not specified in the config
+const DEFAULT_COOKIE_PERIOD = 30;
 
 const Earnings = () => {
   const navigate = useNavigate();
@@ -41,6 +58,8 @@ const Earnings = () => {
             created_at,
             status,
             description,
+            cookie_period_days,
+            cookie_period_end,
             source_transaction_id,
             marketplace_tools:source_transaction_id(name)
           `)
@@ -78,13 +97,18 @@ const Earnings = () => {
           toolName = purchase.marketplace_tools.name as string;
         }
         
+        // Get cookie period for this tool
+        const cookiePeriodDays = CUSTOM_COOKIE_PERIODS[toolName] || DEFAULT_COOKIE_PERIOD;
+        
         return {
           id: purchase.id,
           amount: purchase.cashback_amount,
           created_at: purchase.created_at,
           status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
           tool_name: toolName,
-          description: `Cashback from ${toolName}`
+          description: `Cashback from ${toolName}`,
+          cookie_period_days: cookiePeriodDays,
+          cookie_period_end: new Date(new Date(purchase.created_at).getTime() + cookiePeriodDays * 24 * 60 * 60 * 1000).toISOString()
         };
       });
 
@@ -110,9 +134,13 @@ const Earnings = () => {
           console.error('Error accessing marketplace_tools:', e);
         }
         
+        // Use stored cookie period or calculate based on the tool name
+        const cookiePeriodDays = transaction.cookie_period_days || CUSTOM_COOKIE_PERIODS[toolName] || DEFAULT_COOKIE_PERIOD;
+        
         return {
           ...transaction,
-          tool_name: toolName
+          tool_name: toolName,
+          cookie_period_days: cookiePeriodDays
         };
       });
 
@@ -159,6 +187,27 @@ const Earnings = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  // Calculate expected confirmation date based on created date and cookie period
+  const getExpectedConfirmationDate = (item: any) => {
+    const createdDate = new Date(item.created_at);
+    const cookiePeriod = item.cookie_period_days || 
+                        CUSTOM_COOKIE_PERIODS[item.tool_name] || 
+                        DEFAULT_COOKIE_PERIOD;
+    
+    if (item.status === 'completed') {
+      return 'Already confirmed';
+    }
+    
+    // If cookie_period_end exists, use that
+    if (item.cookie_period_end) {
+      return formatDate(item.cookie_period_end);
+    }
+    
+    // Otherwise calculate based on created_at and cookie period days
+    const confirmationDate = new Date(createdDate.getTime() + cookiePeriod * 24 * 60 * 60 * 1000);
+    return formatDate(confirmationDate);
   };
 
   return (
@@ -230,6 +279,8 @@ const Earnings = () => {
                     <TableHead>Date</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Cookie Period</TableHead>
+                    <TableHead>Expected Confirmation</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -247,6 +298,8 @@ const Earnings = () => {
                           {entry.status === 'completed' ? 'Completed' : 'Pending'}
                         </span>
                       </TableCell>
+                      <TableCell>{entry.cookie_period_days || CUSTOM_COOKIE_PERIODS[entry.tool_name] || DEFAULT_COOKIE_PERIOD} days</TableCell>
+                      <TableCell>{getExpectedConfirmationDate(entry)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

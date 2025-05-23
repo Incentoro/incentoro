@@ -23,12 +23,15 @@ const handler = async (_req: Request): Promise<Response> => {
       .from("transactions")
       .select(`
         *,
-        profiles (email)
+        profiles (email),
+        marketplace_tools:source_transaction_id (name)
       `)
       .eq("status", "pending")
       .lte("cookie_period_end", new Date().toISOString());
 
     if (fetchError) throw fetchError;
+
+    console.log(`Processing ${transactions?.length || 0} completed transactions`);
 
     // Process each transaction
     for (const transaction of transactions || []) {

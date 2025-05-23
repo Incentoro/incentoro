@@ -10,6 +10,24 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
+// Custom cookie period configuration for specific tools
+const CUSTOM_COOKIE_PERIODS: Record<string, number> = {
+  "Koala AI": 60,
+  "Scalenut": 60,
+  "Pouncer AI": 90,
+  "ArtSpace.ai": 45,
+  "Moosend": 90,
+  "Frase": 60,
+  "Text Cortex": 60,
+  "ADCreative.ai": 30,
+  "Mangools": 30,
+  "Lemlist": 30,
+  "MurfAI": 90
+};
+
+// Default cookie period (days) if not specified in the config
+const DEFAULT_COOKIE_PERIOD = 30;
+
 const Marketplace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -62,9 +80,17 @@ const Marketplace = () => {
     tool.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const getCashbackPercentage = (basePercentage: number) => {
-    // Premium users get double the cashback percentage
-    return isPremiumUser ? Math.min(basePercentage * 2, 20) : basePercentage;
+  const getCookiePeriod = (toolName: string): number => {
+    return CUSTOM_COOKIE_PERIODS[toolName] || DEFAULT_COOKIE_PERIOD;
+  };
+
+  const getCashbackPercentage = (tool: any) => {
+    // Premium users get higher cashback rate
+    if (isPremiumUser) {
+      return tool.premium_cashback_percentage || Math.min(tool.cashback_percentage * 2, 20);
+    } else {
+      return tool.free_cashback_percentage || tool.cashback_percentage;
+    }
   };
 
   const handleBuyNow = async (tool: any) => {
@@ -74,6 +100,9 @@ const Marketplace = () => {
         navigate('/signin');
         return;
       }
+
+      // Get cookie period for this tool
+      const cookiePeriodDays = getCookiePeriod(tool.name);
 
       // Record click in the click_logs table
       const { error: clickLogError } = await supabase
@@ -115,7 +144,8 @@ const Marketplace = () => {
               },
               body: JSON.stringify({
                 email: userEmail,
-                toolName: tool.name
+                toolName: tool.name,
+                cookiePeriod: cookiePeriodDays
               }),
             }
           );
@@ -133,11 +163,11 @@ const Marketplace = () => {
       window.open(tool.base_url, '_blank');
       
       // Adjust cashback percentage based on user's plan
-      const adjustedCashbackPercentage = getCashbackPercentage(tool.cashback_percentage);
+      const adjustedCashbackPercentage = getCashbackPercentage(tool);
       
       toast({
         title: "Cashback tracking activated",
-        description: `You'll earn ${adjustedCashbackPercentage}% cashback on your purchase. We've sent you a confirmation email.`,
+        description: `You'll earn ${adjustedCashbackPercentage}% cashback on your purchase. Cookie period: ${cookiePeriodDays} days.`,
       });
     } catch (error: any) {
       console.error('Error in handleBuyNow:', error);
@@ -230,7 +260,7 @@ const Marketplace = () => {
                       <p className="text-sm text-gray-500">Cashback</p>
                       <div className="flex items-center gap-2">
                         <p className="font-semibold text-green-600">
-                          {getCashbackPercentage(tool.cashback_percentage)}%
+                          {getCashbackPercentage(tool)}%
                         </p>
                         {isPremiumUser && (
                           <Badge variant="outline" className="text-xs border-green-200 bg-green-50 text-green-700">
@@ -240,8 +270,8 @@ const Marketplace = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm text-gray-500">Price</p>
-                      <p className="font-semibold">${tool.price}</p>
+                      <p className="text-sm text-gray-500">Cookie Period</p>
+                      <p className="font-semibold">{getCookiePeriod(tool.name)} days</p>
                     </div>
                   </div>
                   <Button 
