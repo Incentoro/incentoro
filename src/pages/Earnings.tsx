@@ -1,4 +1,3 @@
-
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,7 +34,15 @@ const Earnings = () => {
       const [transactionsResponse, purchasesResponse] = await Promise.all([
         supabase
           .from('transactions')
-          .select('*, marketplace_tools:source_transaction_id(name)')
+          .select(`
+            id,
+            amount,
+            created_at,
+            status,
+            description,
+            source_transaction_id,
+            marketplace_tools:source_transaction_id(name)
+          `)
           .eq('user_id', session.user.id)
           .eq('type', 'cashback')
           .order('created_at', { ascending: false }),
@@ -65,8 +72,8 @@ const Earnings = () => {
         amount: purchase.cashback_amount,
         created_at: purchase.created_at,
         status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
-        tool_name: purchase.marketplace_tools.name,
-        description: `Cashback from ${purchase.marketplace_tools.name}`
+        tool_name: purchase.marketplace_tools?.name || 'Unknown Tool',
+        description: `Cashback from ${purchase.marketplace_tools?.name || 'Unknown Tool'}`
       }));
 
       // Add tool name to transactions where available

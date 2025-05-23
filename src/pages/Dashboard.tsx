@@ -42,6 +42,7 @@ interface CashbackHistory {
   description: string;
   source_transaction_id?: string;
   cookie_period_end?: string;
+  tool_name?: string;
 }
 
 interface CashbackDataPoint {
@@ -147,7 +148,15 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
       const [transactionsResponse, purchasesResponse] = await Promise.all([
         supabase
           .from('transactions')
-          .select('*, marketplace_tools:source_transaction_id(name)')
+          .select(`
+            id,
+            amount,
+            created_at,
+            status,
+            description,
+            source_transaction_id,
+            marketplace_tools:source_transaction_id(name)
+          `)
           .eq('user_id', session.user.id)
           .eq('type', 'cashback')
           .order('created_at', { ascending: false }),
@@ -177,8 +186,8 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         amount: purchase.cashback_amount,
         created_at: purchase.created_at,
         status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
-        description: `Cashback from ${purchase.marketplace_tools.name}`,
-        tool_name: purchase.marketplace_tools.name,
+        description: `Cashback from ${purchase.marketplace_tools?.name || 'Unknown Tool'}`,
+        tool_name: purchase.marketplace_tools?.name || 'Unknown Tool',
       }));
 
       // Add tool name to transactions where available
