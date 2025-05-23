@@ -8,11 +8,32 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Marketplace = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Get user's subscription plan type
+  const { data: userPlan } = useQuery({
+    queryKey: ['user-subscription-plan'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { planType: 'free' };
+
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .select('plan_type')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (error || !data) return { planType: 'free' };
+      return { planType: data.plan_type };
+    }
+  });
+
+  const isPremiumUser = userPlan?.planType === 'premium';
 
   // Fetch all marketplace tools
   const { data: tools, isLoading } = useQuery({
@@ -23,7 +44,14 @@ const Marketplace = () => {
         .select('*');
       
       if (error) throw error;
-      return data;
+
+      // Filter out the tools mentioned in the request
+      return data.filter(tool => 
+        !['ChatGPT Plus', 'MidJourney', 'Copy.ai'].includes(tool.name) &&
+        // Handle duplicate MurfAI (keep only one if duplicates exist)
+        !(tool.name === 'MurfAI' && data.filter(t => t.name === 'MurfAI').length > 1 && 
+          data.filter(t => t.name === 'MurfAI').indexOf(tool) > 0)
+      );
     }
   });
 
@@ -33,6 +61,11 @@ const Marketplace = () => {
     tool.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     tool.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const getCashbackPercentage = (basePercentage: number) => {
+    // Premium users get double the cashback percentage
+    return isPremiumUser ? Math.min(basePercentage * 2, 20) : basePercentage;
+  };
 
   const handleBuyNow = async (tool: any) => {
     try {
@@ -99,9 +132,12 @@ const Marketplace = () => {
       // Open the affiliate link in a new tab
       window.open(tool.base_url, '_blank');
       
+      // Adjust cashback percentage based on user's plan
+      const adjustedCashbackPercentage = getCashbackPercentage(tool.cashback_percentage);
+      
       toast({
         title: "Cashback tracking activated",
-        description: `You'll earn ${tool.cashback_percentage}% cashback on your purchase. We've sent you a confirmation email.`,
+        description: `You'll earn ${adjustedCashbackPercentage}% cashback on your purchase. We've sent you a confirmation email.`,
       });
     } catch (error: any) {
       console.error('Error in handleBuyNow:', error);
@@ -126,6 +162,22 @@ const Marketplace = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <h1 className="text-2xl font-bold">Marketplace</h1>
+        </div>
+
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-bold mb-2">Earn More with Premium</h2>
+          <p className="text-gray-700 mb-4">
+            Free users earn 5-7.5% cashback. 
+            <span className="font-semibold text-blue-700"> Premium users earn 15-20% cashback!</span>
+          </p>
+          {!isPremiumUser && (
+            <Button 
+              onClick={() => navigate('/settings')}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Upgrade to Premium
+            </Button>
+          )}
         </div>
         
         <div className="relative mb-8">
@@ -155,25 +207,37 @@ const Marketplace = () => {
               <Card key={tool.id} className="overflow-hidden border-gray-200 hover:shadow-md transition-shadow">
                 <div className="p-6">
                   <div className="mb-4 h-24 flex items-center justify-center bg-gray-50 rounded-lg">
-                    <img 
-                      src={tool.image_url || '/placeholder.svg'} 
-                      alt={tool.name} 
-                      className="h-16 object-contain"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/placeholder.svg';
-                      }}
-                    />
+                    <Avatar className="h-20 w-20 border border-gray-100">
+                      <AvatarImage 
+                        src={tool.image_url || 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=300&q=80'} 
+                        alt={tool.name} 
+                        className="object-contain"
+                      />
+                      <AvatarFallback className="bg-gray-100 text-gray-800 text-xl">
+                        {tool.name.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-xl font-semibold">{tool.name}</h3>
                     <Badge>{tool.category}</Badge>
                   </div>
-                  <p className="text-gray-600 mb-4 line-clamp-3 h-18">{tool.description}</p>
+                  <p className="text-gray-600 mb-4 line-clamp-3 h-18 min-h-[4.5rem]">
+                    {tool.description || `${tool.name} is a powerful AI tool that can help boost productivity and streamline your workflows.`}
+                  </p>
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="text-sm text-gray-500">Cashback</p>
-                      <p className="font-semibold text-green-600">{tool.cashback_percentage}%</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-green-600">
+                          {getCashbackPercentage(tool.cashback_percentage)}%
+                        </p>
+                        {isPremiumUser && (
+                          <Badge variant="outline" className="text-xs border-green-200 bg-green-50 text-green-700">
+                            Premium Bonus
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-500">Price</p>
