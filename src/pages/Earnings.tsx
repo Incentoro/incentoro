@@ -1,3 +1,4 @@
+
 import { ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -67,20 +68,40 @@ const Earnings = () => {
       if (purchasesResponse.error) throw purchasesResponse.error;
 
       // Combine and format the data
-      const partnerStackEntries = purchasesResponse.data.map(purchase => ({
-        id: purchase.id,
-        amount: purchase.cashback_amount,
-        created_at: purchase.created_at,
-        status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
-        tool_name: purchase.marketplace_tools?.name || 'Unknown Tool',
-        description: `Cashback from ${purchase.marketplace_tools?.name || 'Unknown Tool'}`
-      }));
+      const partnerStackEntries = purchasesResponse.data.map(purchase => {
+        // Safely access the name property
+        let toolName = 'Unknown Tool';
+        if (purchase.marketplace_tools && 
+            typeof purchase.marketplace_tools === 'object' && 
+            'name' in purchase.marketplace_tools) {
+          toolName = purchase.marketplace_tools.name as string;
+        }
+        
+        return {
+          id: purchase.id,
+          amount: purchase.cashback_amount,
+          created_at: purchase.created_at,
+          status: purchase.external_status === 'confirmed' ? 'completed' : 'pending',
+          tool_name: toolName,
+          description: `Cashback from ${toolName}`
+        };
+      });
 
       // Add tool name to transactions where available
-      const formattedTransactions = transactionsResponse.data.map(transaction => ({
-        ...transaction,
-        tool_name: transaction.marketplace_tools?.name || 'Unknown Tool'
-      }));
+      const formattedTransactions = transactionsResponse.data.map(transaction => {
+        // Safely access the name property
+        let toolName = 'Unknown Tool';
+        if (transaction.marketplace_tools && 
+            typeof transaction.marketplace_tools === 'object' && 
+            'name' in transaction.marketplace_tools) {
+          toolName = transaction.marketplace_tools.name as string;
+        }
+        
+        return {
+          ...transaction,
+          tool_name: toolName
+        };
+      });
 
       return [...formattedTransactions, ...partnerStackEntries].sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
