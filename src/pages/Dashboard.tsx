@@ -202,14 +202,17 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
 
       // Add tool name to transactions where available with proper null checks
       const formattedTransactions = transactionsResponse.data.map(transaction => {
-        // Safely access the name property with null check and type guard
+        // Safely access the name property with simplified null checks
         let toolName = 'Unknown Tool';
-        if (transaction.marketplace_tools && 
-            transaction.marketplace_tools !== null &&
-            typeof transaction.marketplace_tools === 'object' &&
-            transaction.marketplace_tools !== null &&
-            'name' in transaction.marketplace_tools) {
-          toolName = transaction.marketplace_tools.name as string;
+        
+        // First check if marketplace_tools exists and is not null
+        if (transaction.marketplace_tools !== null && 
+            typeof transaction.marketplace_tools === 'object') {
+          // Then safely try to access the name property
+          if ('name' in transaction.marketplace_tools && 
+              transaction.marketplace_tools.name !== null) {
+            toolName = transaction.marketplace_tools.name as string;
+          }
         }
         
         return {
