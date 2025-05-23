@@ -1,3 +1,4 @@
+
 import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import DashboardSidebar from "@/components/DashboardSidebar";
@@ -186,7 +187,8 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
         let toolName = 'Unknown Tool';
         if (purchase.marketplace_tools && 
             typeof purchase.marketplace_tools === 'object' && 
-            'name' in purchase.marketplace_tools) {
+            'name' in purchase.marketplace_tools && 
+            purchase.marketplace_tools.name) {
           toolName = purchase.marketplace_tools.name as string;
         }
         
@@ -202,17 +204,24 @@ const Dashboard = ({ darkMode, setDarkMode }: DashboardProps) => {
 
       // Add tool name to transactions where available with proper null checks
       const formattedTransactions = transactionsResponse.data.map(transaction => {
-        // Safely access the name property with simplified null checks
+        // Safely access the name property with complete null safety
         let toolName = 'Unknown Tool';
         
-        // First check if marketplace_tools exists and is not null
-        if (transaction.marketplace_tools !== null && 
-            typeof transaction.marketplace_tools === 'object') {
-          // Then safely try to access the name property
-          if ('name' in transaction.marketplace_tools && 
-              transaction.marketplace_tools.name !== null) {
-            toolName = transaction.marketplace_tools.name as string;
+        try {
+          // Only proceed if marketplace_tools exists and is an object
+          if (transaction.marketplace_tools && 
+              typeof transaction.marketplace_tools === 'object') {
+            
+            // Type assertion after validation
+            const marketplaceTool = transaction.marketplace_tools as { name?: string | null };
+            
+            // Check if name exists and is not null
+            if (marketplaceTool.name) {
+              toolName = marketplaceTool.name;
+            }
           }
+        } catch (e) {
+          console.error('Error accessing marketplace_tools:', e);
         }
         
         return {
